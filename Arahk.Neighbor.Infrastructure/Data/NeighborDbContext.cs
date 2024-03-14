@@ -10,9 +10,9 @@ public class NeighborDbContext : DbContext, IUnitOfWork
 
     public IRepository<HouseEntity> HouseRepository { get; private set; }
 
-    public NeighborDbContext(DbContextOptions<NeighborDbContext> options, IRepository<HouseEntity> houseRepo) : base(options)
+    public NeighborDbContext(DbContextOptions<NeighborDbContext> options) : base(options)
     {
-        HouseRepository = houseRepo;
+        HouseRepository = new GenericRepository<HouseEntity>(this);
     }
 
 }

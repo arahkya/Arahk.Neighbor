@@ -10,6 +10,6 @@ namespace Arahk.Neighbor.Application.Data
         Task<TEntity> UpdateAsync(TEntity entity);
         Task DeleteAsync(TEntity entity);
         Task<IEnumerable<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-        Task<TEntity> GetByConditionAsync(Expression<Func<TEntity, bool>> expCondition);
+        Task<TEntity?> GetByConditionAsync(Expression<Func<TEntity, bool>> expCondition);
     }
 }

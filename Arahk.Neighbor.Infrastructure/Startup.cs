@@ -17,8 +17,7 @@ public static class Startup
             opt.UseSqlServer(connectionString);
         });
 
-        services.AddScoped<IUnitOfWork, NeighborDbContext>();
-        services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
+        services.AddScoped<IUnitOfWork, NeighborDbContext>();        
 
         return services;
     }

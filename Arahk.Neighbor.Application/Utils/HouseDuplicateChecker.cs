@@ -14,7 +14,7 @@ public class HouseDuplicateChecker
 
     public async Task<bool> IsDuplicate(string addressName)
     {
-        HouseEntity houseEntity = await unitOfWork.HouseRepository.GetByConditionAsync(x => x.AddressName == addressName);
+        HouseEntity? houseEntity = await unitOfWork.HouseRepository.GetByConditionAsync(x => x.AddressName == addressName);
 
         if (houseEntity != null)
         {

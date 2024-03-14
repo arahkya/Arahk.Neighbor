@@ -42,8 +42,8 @@ public class GenericRepository<TEntity> : IRepository<TEntity> where TEntity : c
         return await _dbContext.Set<TEntity>().ToListAsync(cancellationToken);
     }
 
-    public Task<TEntity> GetByConditionAsync(Expression<Func<TEntity, bool>> expCondition)
+    public Task<TEntity?> GetByConditionAsync(Expression<Func<TEntity, bool>> expCondition)
     {
-        return _dbContext.Set<TEntity>().SingleAsync(expCondition);
+        return _dbContext.Set<TEntity>().SingleOrDefaultAsync(expCondition);
     }
 }
