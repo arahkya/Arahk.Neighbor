@@ -1,0 +1,62 @@
+﻿@page "/houses"
+@inject IHttpClientFactory httpClientFactory
+
+<PageTitle>Houses</PageTitle>
+
+<h1>House List</h1>
+
+@if (houses.Count() == 0)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>House ID</th>                
+                <th>House Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var house in houses)
+            {
+                <tr>
+                    <td>@house.Id</td>                    
+                    <td>@house.AddressName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {     
+    private IEnumerable<HouseModel> houses = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadHouseListAsync();
+    }
+
+    private async Task LoadHouseListAsync()
+    {
+        HttpClient httpClient = httpClientFactory.CreateClient("Neighbor");
+        HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "api/house");        
+        HttpResponseMessage response = await httpClient.SendAsync(request);
+
+        if (response.IsSuccessStatusCode)
+        {
+            JsonSerializerOptions options = new ()
+            {
+                PropertyNameCaseInsensitive = true
+            };
+            string json = await response.Content.ReadAsStringAsync();
+            this.houses = JsonSerializer.Deserialize<IEnumerable<HouseModel>>(json, options) ?? new List<HouseModel>();
+            this.houses = this.houses.OrderBy(h => h.AddressName);
+        }
+        else
+        {
+            // Handle the error
+        }
+    }
+}
