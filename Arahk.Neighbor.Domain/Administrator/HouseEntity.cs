@@ -1,6 +1,6 @@
 using Arahk.Neighbor.Domain.Common;
 
-namespace Arahk.Neighbor.Domain.Administrative;
+namespace Arahk.Neighbor.Domain.Administrator;
 
 public class HouseEntity : IEntity
 {

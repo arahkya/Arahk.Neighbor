@@ -1,4 +1,4 @@
-using Arahk.Neighbor.Domain.Administrative;
+using Arahk.Neighbor.Domain.Administrator;
 using MediatR;
 
 namespace Arahk.Neighbor.Application.Query.House

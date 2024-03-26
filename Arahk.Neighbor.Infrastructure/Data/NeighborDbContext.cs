@@ -1,5 +1,5 @@
 using Arahk.Neighbor.Application.Data;
-using Arahk.Neighbor.Domain.Administrative;
+using Arahk.Neighbor.Domain.Administrator;
 using Microsoft.EntityFrameworkCore;
 
 namespace Arahk.Neighbor.Infrastructure.Data;

@@ -1,6 +1,6 @@
 ﻿using Arahk.Neighbor.Application.Commmand.House;
 using Arahk.Neighbor.Application.Utils;
-using Arahk.Neighbor.Domain.Administrative;
+using Arahk.Neighbor.Domain.Administrator;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 

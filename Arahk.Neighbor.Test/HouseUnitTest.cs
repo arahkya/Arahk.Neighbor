@@ -1,6 +1,6 @@
 using Arahk.Neighbor.Application;
 using Arahk.Neighbor.Application.Commmand.House;
-using Arahk.Neighbor.Domain.Administrative;
+using Arahk.Neighbor.Domain.Administrator;
 using Arahk.Neighbor.Infrastructure;
 using Arahk.Neighbor.Infrastructure.Data;
 using MediatR;

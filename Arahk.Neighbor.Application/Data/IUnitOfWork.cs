@@ -1,4 +1,4 @@
-using Arahk.Neighbor.Domain.Administrative;
+using Arahk.Neighbor.Domain.Administrator;
 
 namespace Arahk.Neighbor.Application.Data
 {
