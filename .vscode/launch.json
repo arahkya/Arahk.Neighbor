@@ -1,5 +1,41 @@
 {
     "version": "0.2.0",
     "configurations": [
+        {
+            "type": "coreclr",
+            "name": "Debug Web App",
+            "request": "launch",
+            "launchBrowser": {
+                "enabled": true
+            },
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Arahk.Neighbor.Web/bin/Debug/net8.0/Arahk.Neighbor.Web.dll",
+            "cwd": "${workspaceFolder}/Arahk.Neighbor.Web"
+        },
+        {
+            "type": "coreclr",
+            "name": "Debug Web Api",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/Arahk.Neighbor.Api/bin/Debug/net8.0/Arahk.Neighbor.Api.dll",
+            "cwd": "${workspaceFolder}/Arahk.Neighbor.Api"
+        },
+        {
+            "name": "Watch Web App",
+            "type": "coreclr",
+            "preLaunchTask": "watch",
+            "request": "attach",
+            "processName": "Arahk.Neighbor.Web"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug All",
+            "preLaunchTask": "build",
+            "configurations": [
+                "Debug Web App",
+                "Debug Web Api"
+            ]
+        }
     ]
 }

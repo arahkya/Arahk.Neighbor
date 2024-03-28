@@ -9,8 +9,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient("Neighbor", opt =>
 {
     opt.BaseAddress = new Uri("http://localhost:5250");
-
-
 });
 
 var app = builder.Build();

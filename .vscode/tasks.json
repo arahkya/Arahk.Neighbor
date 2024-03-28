@@ -33,9 +33,12 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/Arahk.Neighbor.sln"
+                "${workspaceFolder}/Arahk.Neighbor.Web/Arahk.Neighbor.Web.csproj",
+                "/property:GenerateFullPaths=true",
+                "/consoleloggerparameters:NoSummary"
             ],
-            "problemMatcher": "$msCompile"
+            "problemMatcher": "$msCompile",
+            "isBackground": true
         }
     ]
 }
