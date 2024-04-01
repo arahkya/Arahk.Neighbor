@@ -18,9 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
 
-        <span className="block text-2xl mb-4">Neighbor</span>
+        <span className="block text-2xl mb-4 mx-4">Neighbor</span>
 
-        <a href="/" className="text-sm">Home</a>     
+        <a href="/" className="text-sm mx-4">Home</a>     
 
         {children}
       </body>

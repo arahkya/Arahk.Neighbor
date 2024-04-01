@@ -21,6 +21,7 @@ public class CreateHandler : IRequestHandler<CreateRequest, HouseEntity>
         };
 
         await unitOfWork.HouseRepository.AddAsync(house);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return house;
     }

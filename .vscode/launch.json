@@ -2,15 +2,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "coreclr",
             "name": "Debug Web App",
+            "type": "node-terminal",
             "request": "launch",
-            "launchBrowser": {
-                "enabled": true
-            },
-            "preLaunchTask": "build",
-            "program": "${workspaceFolder}/Arahk.Neighbor.Web/bin/Debug/net8.0/Arahk.Neighbor.Web.dll",
-            "cwd": "${workspaceFolder}/Arahk.Neighbor.Web"
+            "command": "npm run dev",
+            "cwd": "${workspaceFolder}/Arahk.Neighbor.Web/web-app"
         },
         {
             "type": "coreclr",
@@ -19,13 +15,6 @@
             "preLaunchTask": "build",
             "program": "${workspaceFolder}/Arahk.Neighbor.Api/bin/Debug/net8.0/Arahk.Neighbor.Api.dll",
             "cwd": "${workspaceFolder}/Arahk.Neighbor.Api"
-        },
-        {
-            "name": "Watch Web App",
-            "type": "coreclr",
-            "preLaunchTask": "watch",
-            "request": "attach",
-            "processName": "Arahk.Neighbor.Web"
         }
     ],
     "compounds": [
