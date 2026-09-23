@@ -3,8 +3,9 @@
  * Colors / type / radii: wwwroot/nb-tokens.css (--nb-color-* / --nb-font-* / --nb-radius-*).
  * Spacing & control heights: MudBlazor 9 (pa-/px-/gap-* utilities + Size enum) — see
  * neighbor-design-system/01-spacing-sizing.md + mud-spacing-size-mapping.md.
- * Chrome lock: AppBar height Mud default 64; pad-x 16 (px-4) < nav pad-x 20 (px-5);
- * main clears Fixed AppBar via Mud. No forced 48px control heights / --nb-space|--nb-size heights.
+ * Chrome lock: AppBar height Mud default 64; pad-x 24 (px-6) < nav pad-x 32 (px-8);
+ * prior 16/20 rejected as edge-glued. Main clears Fixed AppBar via Mud.
+ * No forced 48px control heights / --nb-space|--nb-size heights.
  */
 
 html, body {
@@ -458,20 +459,20 @@ html, body {
   color: var(--nb-color-text-primary) !important;
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none !important;
-  /* Horizontal inset on toolbar (Mud px-4 = 16px); avoid double pad with gutters */
+  /* Horizontal inset on toolbar (Mud px-6 = 24px); avoid double pad with gutters */
   padding-left: 0 !important;
   padding-right: 0 !important;
   overflow: visible !important;
   z-index: 1200; /* above drawer content; account MudMenu popover */
 }
 
-/* Vertical center wordmark; AppBar pad-x 16 (Mud px-4) < nav pad-x 20 (Mud px-5) */
+/* Vertical center wordmark; AppBar pad-x 24 (Mud px-6) < nav pad-x 32 (Mud px-8) */
 .nb-appbar .mud-toolbar,
 .nb-appbar .mud-toolbar-appbar {
   display: flex !important;
   align-items: center !important;
-  padding-left: 16px !important; /* Mud px-4 — chrome lock AppBar < nav */
-  padding-right: 16px !important;
+  padding-left: 24px !important; /* Mud px-6 — chrome lock AppBar < nav; 16 was edge-glued */
+  padding-right: 24px !important;
   overflow: visible !important; /* account menu popover must not clip */
 }
 
@@ -512,11 +513,11 @@ html, body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 16px 12px;
+  padding: 16px 24px; /* was 16px 12px — horizontal pad 24 */
 }
 
 .nb-drawer-header {
-  padding: 8px 12px 20px !important;
+  padding: 8px 24px 20px !important; /* match drawer content pad-x 24 */
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
   margin-bottom: 12px;
 }
@@ -539,8 +540,8 @@ html, body {
 }
 
 .nb-nav-link.mud-nav-link {
-  margin-bottom: 4px;
-  padding: 12px 20px !important; /* Mud py-3 px-5; chrome lock nav 20 > AppBar 16 */
+  margin-bottom: 8px; /* was 4 — item gap */
+  padding: 12px 32px !important; /* Mud py-3 px-8; chrome lock nav 32 > AppBar 24 */
   border-radius: var(--nb-radius-toggle-item) !important;
   font: var(--nb-font-body) !important;
   font-weight: var(--nb-font-weight-medium) !important;
@@ -584,10 +585,10 @@ html, body {
 @media (min-width: 960px) {
   .nb-main.mud-main-content,
   .nb-main {
-    /* Mud px-10 / pb-12 */
-    padding-right: 40px !important;
+    /* Mud px-12 / pb-12 — desktop side pad 48 */
+    padding-right: 48px !important;
     padding-bottom: 48px !important;
-    padding-left: 40px !important;
+    padding-left: 48px !important;
   }
 }
 
@@ -635,12 +636,12 @@ html, body {
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
-  padding: 28px 24px;
+  padding: 32px 28px; /* outer ≥32/28 — was 28/24 */
   box-shadow: var(--nb-shadow-card);
 }
 
 .nb-welcome-title {
-  margin: 0 0 12px !important;
+  margin: 0 0 16px !important; /* title→body ≥16 */
   font: var(--nb-font-title) !important;
   font-size: var(--nb-font-size-wordmark) !important;
   color: var(--nb-color-text-primary) !important;
@@ -674,7 +675,7 @@ html, body {
 
 .nb-welcome-tip {
   margin: 0;
-  padding: 16px; /* Mud pa-4 — was cramped at 12 */
+  padding: 20px 20px 20px 24px; /* ≥20; extra left so text clears accent bar */
   font: var(--nb-font-helper);
   font-size: var(--nb-font-size-label);
   color: var(--nb-color-text-muted);
@@ -736,7 +737,7 @@ html, body {
 }
 
 .nb-master-title {
-  margin: 0 0 8px; /* title↔subtitle ≥8 (was 4) */
+  margin: 0 0 16px; /* title↔subtitle ≥12–16 (DS); prior 8 insufficient */
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-wordmark);
   color: var(--nb-color-text-primary);
@@ -785,7 +786,7 @@ html, body {
 }
 
 .nb-master-tab-panel {
-  padding-top: 20px;
+  padding-top: 28px; /* more air under tabs */
 }
 
 .nb-houses-header {
@@ -794,8 +795,8 @@ html, body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 20px;
-  padding: 4px 0; /* breathe vs edges / tabs */
+  margin-bottom: 24px;
+  padding: 8px 0; /* breathe vs edges / tabs */
 }
 
 .nb-houses-title {
@@ -934,7 +935,7 @@ html, body {
 .nb-houses-import-alert { margin-top: 12px !important; }
 
 .nb-houses-empty {
-  padding: 32px 20px;
+  padding: 40px 24px; /* inner pad ≥32 vertical */
   text-align: center;
   background: var(--nb-color-surface) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
@@ -1397,7 +1398,7 @@ html, body {
 .nb-drawer-section {
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
-  padding: 8px 20px; /* align with nav pad-x 20 */
+  padding: 8px 32px; /* align with nav pad-x 32 (px-8) */
   margin-bottom: 4px;
   text-transform: none;
   letter-spacing: 0;

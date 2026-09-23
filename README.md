@@ -35,8 +35,9 @@ Then open the printed URL (typically `http://localhost:5xxx`).
 - Local DB files (`*.db`, `*.db-shm`, `*.db-wal`) are gitignored.
 
 ## UI chrome lock (AppBar vs nav)
-- **AppBar** pad-x **16** (`px-4`) — height Mud default **64** (not Dense/56)
-- **Nav item** pad-x **20** (`px-5`) — intentionally wider than AppBar
+- **AppBar** pad-x **24** (`px-6`) — height Mud default **64** (not Dense/56); prior **16** rejected as edge-glued
+- **Nav item** pad-x **32** (`px-8`) — intentionally wider than AppBar (lock: AppBar 24 < nav 32)
+- Drawer content / section label pad-x **24**; nav item gap **8**
 - Desktop wordmark: AppBar only (no drawer duplicate)
-- Main content clears Fixed AppBar via Mud (`--mud-appbar-height`)
+- Main content clears Fixed AppBar via Mud (`--mud-appbar-height`); main side pad mobile **24** / desktop **48**
 - Spacing/heights: MudBlazor 9 `N×4` utilities + `Size` enum — do not revive `--nb-space-*` / `--nb-size-*-height` as SoT
