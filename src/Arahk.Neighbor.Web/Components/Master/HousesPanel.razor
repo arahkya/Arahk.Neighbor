@@ -15,11 +15,13 @@
         <div class="nb-houses-toolbar">
             <MudButton Variant="Variant.Filled"
                        Color="Color.Primary"
+                       Size="Size.Large"
                        Class="nb-houses-btn-add"
                        OnClick="OpenAddAsync">
                 + @ThaiCopy.T("houses.action.add")
             </MudButton>
             <MudButton Variant="Variant.Outlined"
+                       Size="Size.Medium"
                        Class="nb-houses-btn-import"
                        OnClick="ToggleImport">
                 @(_importOpen ? ThaiCopy.T("houses.action.collapse_import") : ThaiCopy.T("houses.action.import"))

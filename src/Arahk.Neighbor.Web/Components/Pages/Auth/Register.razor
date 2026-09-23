@@ -21,8 +21,8 @@
     <MudAlert Severity="Severity.Error" Dense="true" Class="auth-alert">@_formError</MudAlert>
 }
 
-<div class="auth-field">
-    <label class="field-label" for="reg-displayname">@ThaiCopy.T("register.displayname.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="reg-displayname">@ThaiCopy.T("register.displayname.label")</label>
     <MudTextField @bind-Value="_displayName" id="reg-displayname"
                   Placeholder="@ThaiCopy.T("register.displayname.placeholder")"
                   HelperText="@ThaiCopy.T("register.displayname.helper")" Variant="Variant.Outlined"
@@ -30,8 +30,8 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="auth-field">
-    <label class="field-label" for="reg-email">@ThaiCopy.T("register.email.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="reg-email">@ThaiCopy.T("register.email.label")</label>
     <MudTextField @bind-Value="_email" id="reg-email"
                   Placeholder="@ThaiCopy.T("register.email.placeholder")"
                   HelperText="@ThaiCopy.T("register.email.helper")" Variant="Variant.Outlined"
@@ -39,8 +39,8 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="auth-field">
-    <label class="field-label" for="reg-phone">@ThaiCopy.T("register.phone.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="reg-phone">@ThaiCopy.T("register.phone.label")</label>
     <MudTextField @bind-Value="_phone" id="reg-phone"
                   Placeholder="@ThaiCopy.T("register.phone.placeholder")"
                   HelperText="@ThaiCopy.T("register.phone.helper")" Variant="Variant.Outlined"
@@ -48,8 +48,8 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="auth-field">
-    <label class="field-label" for="reg-password">@ThaiCopy.T("register.password.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="reg-password">@ThaiCopy.T("register.password.label")</label>
     <MudTextField @bind-Value="_password" id="reg-password"
                   Placeholder="@ThaiCopy.T("register.password.placeholder")"
                   HelperText="@ThaiCopy.T("register.password.helper")" Variant="Variant.Outlined"
@@ -61,8 +61,8 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="auth-field">
-    <label class="field-label" for="reg-password2">@ThaiCopy.T("register.password_confirm.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="reg-password2">@ThaiCopy.T("register.password_confirm.label")</label>
     <MudTextField @bind-Value="_passwordConfirm" id="reg-password2"
                   Placeholder="@ThaiCopy.T("register.password_confirm.placeholder")" Variant="Variant.Outlined"
                   Immediate="true" InputType="@(_showPw2 ? InputType.Text : InputType.Password)"
@@ -73,7 +73,7 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="@($"terms-row{(!string.IsNullOrEmpty(_termsErr) ? " is-error" : string.Empty)}")">
+<div class="@($"terms-row gap-2{(!string.IsNullOrEmpty(_termsErr) ? " is-error" : string.Empty)}")">
     <label class="terms-check">
         <input type="checkbox" @bind="_terms" />
     </label>
@@ -89,9 +89,9 @@
     <div class="terms-error">@_termsErr</div>
 }
 
-<div class="auth-form-actions">
+<div class="auth-form-actions mt-2 d-flex flex-column gap-3">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-               OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
+               OnClick="SubmitAsync" Class="auth-cta px-5" Size="Size.Large">
         @if (_busy)
         {
             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
@@ -100,7 +100,7 @@
     </MudButton>
 </div>
 
-<div class="auth-footer">
+<div class="auth-footer mt-4">
     <MudLink Href="/login">@ThaiCopy.T("register.link.login")</MudLink>
 </div>
 

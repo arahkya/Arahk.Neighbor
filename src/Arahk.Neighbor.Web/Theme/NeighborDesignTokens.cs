@@ -1,10 +1,10 @@
 namespace Arahk.Neighbor.Web.Theme;
 
 /// <summary>
-/// C# mirror of Neighbor Design System tokens (<c>wwwroot/nb-tokens.css</c> / <c>--nb-*</c>).
-/// CSS tokens are the single source of truth; these constants exist so MudBlazor
-/// (which needs concrete strings) stays aligned without inventing a second palette.
-/// Values must match QA-approved numerics (48 / 20 / 390·420 / border 1.5, etc.).
+/// C# mirror of Neighbor Design System color / type / radius tokens
+/// (<c>wwwroot/nb-tokens.css</c> / <c>--nb-*</c>).
+/// Spacing and control heights follow MudBlazor 9 (utilities + <see cref="MudBlazor.Size"/>);
+/// do not reintroduce Size*/Space* constants that fight Mud defaults.
 /// </summary>
 public static class NeighborDesignTokens
 {
@@ -63,15 +63,16 @@ public static class NeighborDesignTokens
     public const string LineHeightHelper = "1.45";
     public const string LineHeightButton = "1.25";
 
-    // Radii / control sizes (string form for MudBlazor LayoutProperties)
+    // Radii (string form for MudBlazor LayoutProperties)
     public const string RadiusButton = "12px"; // --nb-radius-button
     public const string RadiusInput = "10px";  // --nb-radius-input
     public const string RadiusCard = "16px";   // --nb-radius-card
 
-    public const string SizeInputHeight = "48px";   // --nb-size-input-height
-    public const string SizeButtonHeight = "48px";  // --nb-size-button-height
-    public const string SizeCheckbox = "20px";      // --nb-size-checkbox
-    public const string SizeCardWidthMobile = "390px";
-    public const string SizeCardWidthDesktop = "420px";
     public const string BorderWidth = "1.5px";
+
+    /// <summary>
+    /// Drawer width above Mud default 240px — Thai nav labels need the extra room.
+    /// Wired via <see cref="NeighborTheme"/> LayoutProperties.DrawerWidthLeft/Right.
+    /// </summary>
+    public const string DrawerWidth = "272px";
 }

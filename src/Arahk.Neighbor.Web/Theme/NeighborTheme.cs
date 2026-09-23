@@ -3,8 +3,9 @@ using MudBlazor;
 namespace Arahk.Neighbor.Web.Theme;
 
 /// <summary>
-/// MudBlazor theme aligned with Neighbor Design System (<c>--nb-*</c> / <see cref="NeighborDesignTokens"/>).
-/// Prefer CSS <c>var(--nb-*)</c> for custom UI; this theme covers MudBlazor primitives.
+/// MudBlazor theme aligned with Neighbor Design System colors / type / radii.
+/// Spacing and control heights use Mud defaults + utilities (<c>pa-</c>/<c>Size</c>).
+/// AppBar height: Mud default 64px (prefer over Dense/56 per DS SoT).
 /// </summary>
 public static class NeighborTheme
 {
@@ -83,8 +84,11 @@ public static class NeighborTheme
         },
         LayoutProperties = new LayoutProperties
         {
-            // MudBlazor default radius → button radius token (12px)
             DefaultBorderRadius = NeighborDesignTokens.RadiusButton,
+            // AppbarHeight: leave Mud default 64px (DS SoT; not Dense/56).
+            // Drawer wider than Mud 240px for Thai nav labels (product lock).
+            DrawerWidthLeft = NeighborDesignTokens.DrawerWidth,
+            DrawerWidthRight = NeighborDesignTokens.DrawerWidth,
         },
     };
 }

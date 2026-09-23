@@ -18,7 +18,7 @@
 <MudSnackbarProvider />
 
 <MudLayout Class="nb-app-layout">
-    <MudAppBar Elevation="0" Dense="true" Class="nb-appbar" Fixed="true">
+    <MudAppBar Elevation="0" Class="nb-appbar px-3" Fixed="true">
         @if (_isBelowMd)
         {
             <MudIconButton Icon="@Icons.Material.Filled.Menu"
@@ -69,7 +69,6 @@
                ClipMode="@DrawerClip"
                Breakpoint="Breakpoint.Md"
                Elevation="@(_isBelowMd ? 2 : 0)"
-               Width="var(--nb-size-drawer-width)"
                Class="nb-drawer"
                Overlay="true"
                OverlayAutoClose="true">
@@ -91,25 +90,25 @@
         <MudNavMenu Class="nb-nav-menu" aria-label="@ThaiCopy.T("a11y.main_nav")">
             <MudNavLink Href="/"
                         Match="NavLinkMatch.All"
-                        Class="nb-nav-link"
+                        Class="nb-nav-link px-4 py-3"
                         OnClick="OnHomeNav">
                 @ThaiCopy.T("nav.home")
             </MudNavLink>
-            <MudNavLink Class="nb-nav-link"
+            <MudNavLink Class="nb-nav-link px-4 py-3"
                         OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.payment")))">
                 @ThaiCopy.T("nav.payment")
             </MudNavLink>
-            <MudNavLink Class="nb-nav-link"
+            <MudNavLink Class="nb-nav-link px-4 py-3"
                         OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.packages")))">
                 @ThaiCopy.T("nav.packages")
             </MudNavLink>
-            <MudNavLink Class="nb-nav-link"
+            <MudNavLink Class="nb-nav-link px-4 py-3"
                         OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.visitor")))">
                 @ThaiCopy.T("nav.visitor")
             </MudNavLink>
             <MudNavLink Href="/master"
                         Match="NavLinkMatch.Prefix"
-                        Class="nb-nav-link"
+                        Class="nb-nav-link px-4 py-3"
                         OnClick="OnMasterNav">
                 @ThaiCopy.T("nav.master_data")
             </MudNavLink>

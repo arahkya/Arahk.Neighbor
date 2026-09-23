@@ -18,11 +18,11 @@
 
 <div class="mode-toggle">
     <MudButton Variant="@(_mode == LoginMode.Email ? Variant.Filled : Variant.Text)"
-               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Email))" Class="mode-btn">
+               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Email))" Class="mode-btn" Size="Size.Medium">
         @ThaiCopy.T("login.mode.email")
     </MudButton>
     <MudButton Variant="@(_mode == LoginMode.Phone ? Variant.Filled : Variant.Text)"
-               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Phone))" Class="mode-btn">
+               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Phone))" Class="mode-btn" Size="Size.Medium">
         @ThaiCopy.T("login.mode.phone")
     </MudButton>
 </div>
@@ -34,8 +34,8 @@
 
 @if (_mode == LoginMode.Email)
 {
-    <div class="auth-field">
-        <label class="field-label" for="login-email">@ThaiCopy.T("login.email.label")</label>
+    <div class="auth-field mb-4">
+        <label class="field-label mb-2" for="login-email">@ThaiCopy.T("login.email.label")</label>
         <MudTextField @bind-Value="_email" id="login-email"
                       Placeholder="@ThaiCopy.T("login.email.placeholder")" Variant="Variant.Outlined"
                       Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr"
@@ -44,8 +44,8 @@
 }
 else
 {
-    <div class="auth-field">
-        <label class="field-label" for="login-phone">@ThaiCopy.T("login.phone.label")</label>
+    <div class="auth-field mb-4">
+        <label class="field-label mb-2" for="login-phone">@ThaiCopy.T("login.phone.label")</label>
         <MudTextField @bind-Value="_phone" id="login-phone"
                       Placeholder="@ThaiCopy.T("login.phone.placeholder")"
                       HelperText="@ThaiCopy.T("login.phone.helper")" Variant="Variant.Outlined"
@@ -54,8 +54,8 @@ else
     </div>
 }
 
-<div class="auth-field">
-    <label class="field-label" for="login-password">@ThaiCopy.T("login.password.label")</label>
+<div class="auth-field mb-4">
+    <label class="field-label mb-2" for="login-password">@ThaiCopy.T("login.password.label")</label>
     <MudTextField @bind-Value="_password" id="login-password"
                   Placeholder="@ThaiCopy.T("login.password.placeholder")" Variant="Variant.Outlined"
                   Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
@@ -66,13 +66,13 @@ else
                   Margin="Margin.None" />
 </div>
 
-<div class="forgot-row">
+<div class="forgot-row mt-1 mb-4 d-flex justify-end">
     <MudLink Typo="Typo.body2" Class="forgot-link" OnClick="OnForgot">@ThaiCopy.T("login.link.forgot")</MudLink>
 </div>
 
-<div class="auth-form-actions">
+<div class="auth-form-actions mt-2 d-flex flex-column gap-3">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-               OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
+               OnClick="SubmitAsync" Class="auth-cta px-5" Size="Size.Large">
         @if (_busy)
         {
             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
@@ -81,7 +81,7 @@ else
     </MudButton>
 </div>
 
-<div class="auth-footer">
+<div class="auth-footer mt-4">
     <MudLink Href="/register">@ThaiCopy.T("login.link.register")</MudLink>
 </div>
 

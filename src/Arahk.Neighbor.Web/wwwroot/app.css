@@ -1,8 +1,10 @@
 /**
  * Neighbor Web — app styles
- * Tokens: wwwroot/nb-tokens.css (canonical --nb-* from Neighbor Design System)
- * Do NOT redefine design tokens here. Consume var(--nb-*) only.
- * Numeric values match QA tip 6198633 (token wiring, not redesign).
+ * Colors / type / radii: wwwroot/nb-tokens.css (--nb-color-* / --nb-font-* / --nb-radius-*).
+ * Spacing & control heights: MudBlazor 9 (pa-/px-/gap-* utilities + Size enum) — see
+ * neighbor-design-system/01-spacing-sizing.md + mud-spacing-size-mapping.md.
+ * Chrome: AppBar height Mud default 64; pad-x 12 (px-3) < nav pad-x 16 (px-4);
+ * main clears Fixed AppBar via Mud. No forced 48px control heights.
  */
 
 html, body {
@@ -20,30 +22,30 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--nb-space-page-y-mobile) var(--nb-space-page-x-mobile) var(--nb-space-12);
+  padding: 24px 16px 48px;
   background: var(--nb-color-bg);
 }
 
 @media (min-width: 768px) {
   .auth-page {
     align-items: center;
-    padding: var(--nb-space-page-desktop) var(--nb-space-6);
+    padding: 48px 24px;
   }
 }
 
 .auth-card {
   width: 100%;
-  max-width: var(--nb-size-card-width-mobile);
+  max-width: 390px; /* layout constant — not Size SoT */
   background: var(--nb-color-surface);
   border-radius: var(--nb-radius-card);
-  padding: var(--nb-space-card-y) var(--nb-space-card-x);
+  /* pad: AuthLayout Class px-6 py-8 (Mud) */
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none;
 }
 
 @media (min-width: 768px) {
   .auth-card {
-    max-width: var(--nb-size-card-width-desktop);
+    max-width: 420px;
     border-color: transparent;
     box-shadow: var(--nb-shadow-card);
   }
@@ -66,7 +68,7 @@ html, body {
 .brand .tagline {
   font: var(--nb-font-tagline);
   color: var(--nb-color-text-muted);
-  margin: 0 0 var(--nb-space-5);
+  margin: 0 0 20px;
 }
 
 .appbar-wordmark {
@@ -89,21 +91,21 @@ html, body {
   text-align: center;
   font: var(--nb-font-title) !important;
   color: var(--nb-color-text-primary) !important;
-  margin: 0 0 var(--nb-space-6) !important;
+  margin: 0 0 24px !important;
 }
 
 .auth-subtitle {
   text-align: center;
   font: var(--nb-font-body) !important;
   color: var(--nb-color-text-secondary) !important;
-  margin: 0 0 var(--nb-space-1) !important;
+  margin: 0 0 4px !important;
 }
 
 .auth-email-mask {
   text-align: center;
   font: var(--nb-font-weight-semibold) var(--nb-font-size-body)/1.4 var(--nb-font-family);
   color: var(--nb-color-text-primary);
-  margin: 0 0 var(--nb-space-6);
+  margin: 0 0 24px;
 }
 
 /* ——— Mode toggle ——— */
@@ -113,15 +115,12 @@ html, body {
   background: var(--nb-color-surface-subtle);
   border: var(--nb-border-width) solid var(--nb-color-border);
   border-radius: var(--nb-radius-toggle);
-  padding: var(--nb-space-toggle-pad);
-  margin-bottom: var(--nb-space-after-toggle);
+  padding: 4px; /* Mud pa-1; was 3px toggle-pad */
+  margin-bottom: 20px; /* Mud mb-5 */
 }
 
 .mode-toggle .mode-btn {
-  flex: 1;
-  height: calc(var(--nb-size-toggle-height) - (2 * var(--nb-space-toggle-pad))) !important;
-  min-height: calc(var(--nb-size-toggle-height) - (2 * var(--nb-space-toggle-pad))) !important;
-  border-radius: var(--nb-radius-toggle-item) !important;
+  flex: 1;  border-radius: var(--nb-radius-toggle-item) !important;
   font: var(--nb-font-toggle) !important;
   text-transform: none !important;
   box-shadow: none !important;
@@ -138,27 +137,27 @@ html, body {
 
 /* ——— Field stack ——— */
 .auth-field {
-  margin-bottom: var(--nb-space-field-gap) !important;
+  margin-bottom: 16px !important;
 }
 
 .auth-field:last-of-type {
-  margin-bottom: var(--nb-space-field-gap);
+  margin-bottom: 16px;
 }
 
 .field-label {
   display: block;
   font: var(--nb-font-label);
   color: var(--nb-color-text-primary);
-  margin: 0 0 var(--nb-space-label-gap);
+  margin: 0 0 8px;
 }
 
-/* MudBlazor text field → mockup input (48px, 15px, radius 10) */
+/* MudBlazor text field — radius/type/border from tokens; height from Mud (no forced 48px) */
 .auth-card .mud-input-control {
   margin-top: 0 !important;
 }
 
 .auth-card .auth-field .mud-input-control-helper-container {
-  margin-top: var(--nb-space-helper-gap);
+  margin-top: 8px;
   padding: 0 2px; /* optical inset — not a DS token */
 }
 
@@ -197,10 +196,7 @@ html, body {
 .auth-card .mud-input > textarea.mud-input-slot,
 .auth-card .mud-input .mud-input-slot {
   font: var(--nb-font-body) !important;
-  color: var(--nb-color-text-primary) !important;
-  min-height: var(--nb-size-input-height) !important;
-  height: var(--nb-size-input-height) !important;
-  padding: 0 var(--nb-space-input-x) !important;
+  color: var(--nb-color-text-primary) !important;  padding: 0 16px !important;
 }
 
 .auth-card .mud-input > input.mud-input-slot::placeholder {
@@ -209,7 +205,7 @@ html, body {
 }
 
 .auth-card .mud-input-adorned-end > input.mud-input-slot {
-  padding-right: var(--nb-size-input-pad-right-eye) !important;
+  padding-right: 48px !important;
 }
 
 .auth-card .mud-input-adornment {
@@ -237,7 +233,7 @@ html, body {
 .forgot-row {
   display: flex;
   justify-content: flex-end;
-  margin: var(--nb-space-1) 0 var(--nb-space-4);
+  margin: 4px 0 16px;
 }
 
 .forgot-link {
@@ -252,20 +248,19 @@ html, body {
 }
 
 .auth-form-actions {
-  margin-top: var(--nb-space-2);
+  margin-top: 8px;
   display: flex;
   flex-direction: column;
-  gap: var(--nb-space-3);
+  gap: 12px;
 }
 
 .auth-cta {
-  height: var(--nb-size-button-height) !important;
-  min-height: var(--nb-size-button-height) !important;
   border-radius: var(--nb-radius-button) !important;
   font: var(--nb-font-button) !important;
   text-transform: none !important;
   box-shadow: var(--nb-shadow-button-primary) !important;
-  padding: 0 var(--nb-space-button-x) !important;
+  /* height from Size.Large; no min-height !important */
+  padding: 0 20px !important; /* Mud px-5-ish */
 }
 
 .auth-cta.mud-button-filled:hover:not(:disabled) {
@@ -273,8 +268,6 @@ html, body {
 }
 
 .auth-secondary-btn {
-  height: var(--nb-size-button-height) !important;
-  min-height: var(--nb-size-button-height) !important;
   border-radius: var(--nb-radius-button) !important;
   font: var(--nb-font-button-secondary) !important;
   text-transform: none !important;
@@ -285,7 +278,7 @@ html, body {
 
 .auth-footer {
   text-align: center;
-  margin-top: var(--nb-space-link-mt);
+  margin-top: 16px;
 }
 
 .auth-footer a,
@@ -296,7 +289,7 @@ html, body {
 }
 
 .auth-footer.muted {
-  margin-top: var(--nb-space-link-muted-mt);
+  margin-top: 12px;
 }
 
 .auth-footer.muted a,
@@ -314,8 +307,8 @@ html, body {
 .terms-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--nb-space-terms-gap);
-  margin: var(--nb-space-5) 0 var(--nb-space-2);
+  gap: 8px; /* Mud gap-2; terms-gap snapped 10→8 */
+  margin: 20px 0 8px;
 }
 
 .terms-check {
@@ -327,8 +320,8 @@ html, body {
 .terms-check input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: var(--nb-size-checkbox);
-  height: var(--nb-size-checkbox);
+  width: 20px;
+  height: 20px;
   margin: 0;
   border: var(--nb-border-width) solid var(--nb-color-border-strong);
   border-radius: var(--nb-radius-checkbox);
@@ -380,24 +373,24 @@ html, body {
 .terms-error {
   font: var(--nb-font-helper);
   color: var(--nb-color-error);
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
 }
 
 /* ——— OTP cells ——— */
 .otp-field {
-  margin-bottom: var(--nb-space-field-gap);
+  margin-bottom: 16px;
 }
 
 .otp-row {
   display: flex;
-  gap: var(--nb-size-otp-gap);
+  gap: 8px;
   justify-content: center;
-  margin: var(--nb-space-1) 0 var(--nb-space-2);
+  margin: 4px 0 8px;
 }
 
 .otp-cell {
-  width: var(--nb-size-otp-cell);
-  height: var(--nb-size-otp-cell);
+  width: 48px;
+  height: 48px;
   border: var(--nb-border-width) solid var(--nb-color-border);
   border-radius: var(--nb-radius-otp);
   background: var(--nb-color-surface);
@@ -442,14 +435,14 @@ html, body {
 .otp-helper {
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
-  margin-top: var(--nb-space-helper-gap);
+  margin-top: 8px;
   text-align: left;
 }
 
 .otp-error {
   font: var(--nb-font-helper);
   color: var(--nb-color-error);
-  margin-top: var(--nb-space-helper-gap);
+  margin-top: 8px;
 }
 
 /* ——— App shell (post-login Home / Layout) ——— */
@@ -460,35 +453,29 @@ html, body {
 
 .nb-appbar.mud-appbar,
 .nb-appbar {
-  height: var(--nb-size-appbar-height) !important;
-  min-height: var(--nb-size-appbar-height) !important;
-  /* Keep Mud fixed-appbar offset math aligned with our 56px token */
-  --mud-appbar-height: var(--nb-size-appbar-height);
+  /* Height: Mud AppBar default 64px (LayoutProperties.AppbarHeight). Do not force --nb-size-*. */
   background: var(--nb-color-surface) !important;
   color: var(--nb-color-text-primary) !important;
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none !important;
-  /* Horizontal inset lives on the toolbar (override Mud gutters); avoid double pad */
+  /* Horizontal inset on toolbar (Mud px-3 = 12px); avoid double pad with gutters */
   padding-left: 0 !important;
   padding-right: 0 !important;
 }
 
-/* Vertical center wordmark + Sign out; AppBar pad < nav-item pad */
+/* Vertical center wordmark; AppBar pad-x 12 (Mud px-3) < nav pad-x 16 (Mud px-4) */
 .nb-appbar .mud-toolbar,
 .nb-appbar .mud-toolbar-appbar {
-  height: var(--nb-size-appbar-height) !important;
-  min-height: var(--nb-size-appbar-height) !important;
-  --mud-internal-toolbar-height: var(--nb-size-appbar-height);
   display: flex !important;
   align-items: center !important;
-  padding-left: var(--nb-space-appbar-x) !important;
-  padding-right: var(--nb-space-appbar-x) !important;
+  padding-left: 12px !important; /* Mud px-3 */
+  padding-right: 12px !important;
 }
 
 .nb-appbar-menu {
   color: var(--nb-color-text-secondary) !important;
-  width: var(--nb-size-menu-btn);
-  height: var(--nb-size-menu-btn);
+  width: 40px;
+  height: 40px;
 }
 
 .nb-appbar-menu:hover {
@@ -497,8 +484,6 @@ html, body {
 }
 
 .nb-signout-btn {
-  height: var(--nb-size-signout-height) !important;
-  min-height: var(--nb-size-signout-height) !important;
   border-radius: var(--nb-radius-button) !important;
   border-color: var(--nb-color-border) !important;
   color: var(--nb-color-text-secondary) !important;
@@ -506,7 +491,7 @@ html, body {
   font-weight: var(--nb-font-weight-semibold) !important;
   text-transform: none !important;
   box-shadow: none !important;
-  padding: 0 var(--nb-space-input-x) !important;
+  padding: 0 16px !important;
 }
 
 .nb-signout-btn:hover {
@@ -518,20 +503,19 @@ html, body {
 .nb-drawer.mud-drawer {
   background: var(--nb-color-surface) !important;
   border-right: var(--nb-border-width-hairline) solid var(--nb-color-border);
-  width: var(--nb-size-drawer-width) !important;
 }
 
 .nb-drawer .mud-drawer-content {
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: var(--nb-space-drawer-y) var(--nb-space-drawer-x);
+  padding: 16px 12px;
 }
 
 .nb-drawer-header {
-  padding: var(--nb-space-2) var(--nb-space-3) var(--nb-space-5) !important;
+  padding: 8px 12px 20px !important;
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
-  margin-bottom: var(--nb-space-3);
+  margin-bottom: 12px;
 }
 
 .nb-drawer-wordmark {
@@ -542,7 +526,7 @@ html, body {
 }
 
 .nb-drawer-tagline {
-  margin: var(--nb-space-1) 0 0 !important;
+  margin: 4px 0 0 !important;
   font: var(--nb-font-tagline) !important;
   color: var(--nb-color-text-muted) !important;
 }
@@ -552,8 +536,8 @@ html, body {
 }
 
 .nb-nav-link.mud-nav-link {
-  margin-bottom: var(--nb-space-1);
-  padding: var(--nb-space-nav-item-y) var(--nb-space-nav-item-x) !important;
+  margin-bottom: 4px;
+  padding: 12px 16px !important; /* Mud py-3 px-4; nav-x snapped 14→16 */
   border-radius: var(--nb-radius-toggle-item) !important;
   font: var(--nb-font-body) !important;
   font-weight: var(--nb-font-weight-medium) !important;
@@ -573,7 +557,7 @@ html, body {
 }
 
 .nb-drawer-footer {
-  padding-top: var(--nb-space-3);
+  padding-top: 12px;
   border-top: var(--nb-border-width-hairline) solid var(--nb-color-border);
   margin-top: auto;
 }
@@ -583,34 +567,34 @@ html, body {
   background: var(--nb-color-overlay) !important;
 }
 
-/* Fixed AppBar: pad-top must clear bar (Mud default was overridden by shorthand padding) */
+/* Fixed AppBar: leave padding-top to Mud (.mud-main-content clears --mud-appbar-height). Content L/R/B = Mud scale. */
 .nb-main.mud-main-content,
 .nb-main {
   background: var(--nb-color-bg) !important;
-  min-height: calc(100vh - var(--nb-size-appbar-height));
-  padding-top: calc(var(--nb-size-appbar-height) + var(--nb-space-6)) !important;
-  padding-right: var(--nb-space-main-mobile) !important;
-  padding-bottom: var(--nb-space-10) !important;
-  padding-left: var(--nb-space-main-mobile) !important;
+  min-height: 100vh;
+  /* Mud px-5 / pb-10 */
+  padding-right: 20px !important;
+  padding-bottom: 40px !important;
+  padding-left: 20px !important;
 }
 
 @media (min-width: 960px) {
   .nb-main.mud-main-content,
   .nb-main {
-    padding-top: calc(var(--nb-size-appbar-height) + var(--nb-space-main-desktop-y)) !important;
-    padding-right: var(--nb-space-main-desktop-x) !important;
-    padding-bottom: var(--nb-space-12) !important;
-    padding-left: var(--nb-space-main-desktop-x) !important;
+    /* Mud px-10 / pb-12 */
+    padding-right: 40px !important;
+    padding-bottom: 48px !important;
+    padding-left: 40px !important;
   }
 }
 
 .nb-main-inner {
-  max-width: var(--nb-size-main-max);
+  max-width: 720px;
   margin: 0 auto;
 }
 
 .nb-alert-soon {
-  margin-bottom: var(--nb-space-4) !important;
+  margin-bottom: 16px !important;
   background: var(--nb-color-primary-muted) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-primary) !important;
   border-radius: var(--nb-radius-card) !important;
@@ -623,7 +607,7 @@ html, body {
 
 .nb-alert-soon-title {
   display: block;
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-label);
   color: var(--nb-color-primary-active);
 }
@@ -637,7 +621,7 @@ html, body {
 }
 
 .nb-alert-soon-cta {
-  margin-top: var(--nb-space-2) !important;
+  margin-top: 8px !important;
   padding-left: 0 !important;
   min-width: 0 !important;
   font: var(--nb-font-link) !important;
@@ -648,19 +632,19 @@ html, body {
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
-  padding: var(--nb-space-welcome-y) var(--nb-space-welcome-x);
+  padding: 28px 24px;
   box-shadow: var(--nb-shadow-card);
 }
 
 .nb-welcome-title {
-  margin: 0 0 var(--nb-space-3) !important;
+  margin: 0 0 12px !important;
   font: var(--nb-font-title) !important;
   font-size: var(--nb-font-size-wordmark) !important;
   color: var(--nb-color-text-primary) !important;
 }
 
 .nb-welcome-body {
-  margin: 0 0 var(--nb-space-6) !important;
+  margin: 0 0 24px !important;
   font: var(--nb-font-body) !important;
   color: var(--nb-color-text-secondary) !important;
 }
@@ -669,31 +653,31 @@ html, body {
   display: block;
   width: 100%;
   height: auto;
-  min-height: var(--nb-size-illustration-h-mobile);
-  max-height: var(--nb-size-illustration-h-desktop);
+  min-height: 200px;
+  max-height: 280px;
   object-fit: cover;
   object-position: left center;
   border-radius: var(--nb-radius-card);
   background: var(--nb-color-accent-soft);
-  margin-bottom: var(--nb-space-5);
+  margin-bottom: 20px;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
 }
 
 @media (min-width: 960px) {
   .nb-welcome-illustration {
-    min-height: var(--nb-size-illustration-h-desktop);
+    min-height: 280px;
   }
 }
 
 .nb-welcome-tip {
   margin: 0;
-  padding: var(--nb-space-3);
+  padding: 12px;
   font: var(--nb-font-helper);
   font-size: var(--nb-font-size-label);
   color: var(--nb-color-text-muted);
   background: var(--nb-color-surface-subtle);
   border-radius: var(--nb-radius-input);
-  border-left: var(--nb-size-tip-border) solid var(--nb-color-accent);
+  border-left: 3px solid var(--nb-color-accent);
 }
 
 .nb-welcome-tip--mobile { display: block; }
@@ -711,17 +695,17 @@ html, body {
 /* legacy class kept for any residual refs */
 .main-bg {
   background: var(--nb-color-bg);
-  min-height: calc(100vh - var(--nb-size-appbar-height));
+  min-height: 100vh;
 }
 
 .home-card {
-  max-width: var(--nb-size-main-max);
-  margin: var(--nb-space-6) auto;
+  max-width: 720px;
+  margin: 24px auto;
   border-radius: var(--nb-radius-card);
 }
 
 .auth-alert {
-  margin-bottom: var(--nb-space-4) !important;
+  margin-bottom: 16px !important;
 }
 
 #blazor-error-ui {
@@ -749,20 +733,20 @@ html, body {
 }
 
 .nb-master-title {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-wordmark);
   color: var(--nb-color-text-primary);
 }
 
 .nb-master-subtitle {
-  margin: 0 0 var(--nb-space-5);
+  margin: 0 0 20px;
   font: var(--nb-font-body);
   color: var(--nb-color-text-secondary);
 }
 
 .nb-master-select-wrap {
-  margin-bottom: var(--nb-space-5);
+  margin-bottom: 20px;
 }
 
 .nb-master-select {
@@ -770,7 +754,7 @@ html, body {
 }
 
 .nb-master-tabs {
-  margin-bottom: var(--nb-space-4);
+  margin-bottom: 16px;
 }
 
 .nb-master-tabs .mud-tabs-toolbar {
@@ -798,7 +782,7 @@ html, body {
 }
 
 .nb-master-tab-panel {
-  padding-top: var(--nb-space-4);
+  padding-top: 16px;
 }
 
 .nb-houses-header {
@@ -806,12 +790,12 @@ html, body {
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--nb-space-4);
-  margin-bottom: var(--nb-space-4);
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 .nb-houses-title {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
   color: var(--nb-color-text-primary);
@@ -826,12 +810,11 @@ html, body {
 .nb-houses-toolbar {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--nb-space-2);
+  gap: 8px;
 }
 
 .nb-houses-btn-add,
 .nb-houses-btn-import {
-  height: var(--nb-size-button-height) !important;
   text-transform: none !important;
   font-weight: var(--nb-font-weight-semibold) !important;
   border-radius: var(--nb-radius-button) !important;
@@ -847,57 +830,57 @@ html, body {
 }
 
 .nb-houses-import {
-  padding: var(--nb-space-5);
-  margin-bottom: var(--nb-space-4);
+  padding: 20px;
+  margin-bottom: 16px;
   background: var(--nb-color-surface) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
   border-radius: var(--nb-radius-card) !important;
 }
 
 .nb-houses-import-title {
-  margin: 0 0 var(--nb-space-4);
+  margin: 0 0 16px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
 }
 
 .nb-houses-guide {
-  padding: var(--nb-space-4);
-  margin-bottom: var(--nb-space-4);
+  padding: 16px;
+  margin-bottom: 16px;
   background: var(--nb-color-surface-subtle);
   border-radius: var(--nb-radius-input);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
 }
 
 .nb-houses-guide-title {
-  margin: 0 0 var(--nb-space-3);
+  margin: 0 0 12px;
   font: var(--nb-font-label);
   color: var(--nb-color-text-primary);
 }
 
 .nb-houses-guide-steps {
-  margin: 0 0 var(--nb-space-3);
-  padding-left: var(--nb-space-5);
+  margin: 0 0 12px;
+  padding-left: 20px;
   font: var(--nb-font-body);
   color: var(--nb-color-text-secondary);
 }
 
-.nb-houses-guide-steps li { margin-bottom: var(--nb-space-2); }
+.nb-houses-guide-steps li { margin-bottom: 8px; }
 
 .nb-houses-guide-notes {
-  margin: 0 0 var(--nb-space-3);
-  padding-left: var(--nb-space-5);
+  margin: 0 0 12px;
+  padding-left: 20px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
 
 .nb-houses-guide-caption {
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
   font: var(--nb-font-label);
 }
 
 .nb-houses-guide-table {
   background: var(--nb-color-surface);
-  margin-bottom: var(--nb-space-2);
+  margin-bottom: 8px;
   overflow-x: auto;
 }
 
@@ -908,20 +891,20 @@ html, body {
 }
 
 .nb-houses-upload {
-  padding: var(--nb-space-4);
+  padding: 16px;
   border: var(--nb-border-width) dashed var(--nb-color-border-strong);
   border-radius: var(--nb-radius-input);
   background: var(--nb-color-accent-soft);
-  margin-bottom: var(--nb-space-3);
+  margin-bottom: 12px;
 }
 
 .nb-houses-upload-title {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-label);
 }
 
 .nb-houses-upload-hint {
-  margin: 0 0 var(--nb-space-3);
+  margin: 0 0 12px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
@@ -933,21 +916,21 @@ html, body {
 }
 
 .nb-houses-file-name {
-  margin: var(--nb-space-2) 0 0;
+  margin: 8px 0 0;
   font: var(--nb-font-helper);
 }
 
-.nb-houses-import-progress { margin-top: var(--nb-space-3); }
+.nb-houses-import-progress { margin-top: 12px; }
 .nb-houses-import-working {
-  margin: var(--nb-space-2) 0 0;
+  margin: 8px 0 0;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-secondary);
 }
 
-.nb-houses-import-alert { margin-top: var(--nb-space-3) !important; }
+.nb-houses-import-alert { margin-top: 12px !important; }
 
 .nb-houses-empty {
-  padding: var(--nb-space-8) var(--nb-space-5);
+  padding: 32px 20px;
   text-align: center;
   background: var(--nb-color-surface) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
@@ -955,19 +938,19 @@ html, body {
 }
 
 .nb-houses-empty-title {
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
 }
 
 .nb-houses-empty-body {
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
   font: var(--nb-font-body);
   color: var(--nb-color-text-secondary);
 }
 
 .nb-houses-empty-hint {
-  margin: 0 0 var(--nb-space-5);
+  margin: 0 0 20px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
@@ -990,12 +973,12 @@ html, body {
 
 .nb-houses-row-actions {
   display: inline-flex;
-  gap: var(--nb-space-2);
+  gap: 8px;
   justify-content: flex-end;
 }
 
 .nb-houses-count {
-  margin: var(--nb-space-3) var(--nb-space-4) var(--nb-space-4);
+  margin: 12px 16px 16px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
@@ -1003,11 +986,11 @@ html, body {
 .nb-house-cards {
   display: flex;
   flex-direction: column;
-  gap: var(--nb-space-3);
+  gap: 12px;
 }
 
 .nb-house-card {
-  padding: var(--nb-space-4);
+  padding: 16px;
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
@@ -1015,7 +998,7 @@ html, body {
 }
 
 .nb-house-card-meta {
-  margin: 0 0 var(--nb-space-3);
+  margin: 0 0 12px;
   font: var(--nb-font-body);
 }
 
@@ -1024,7 +1007,7 @@ html, body {
 
 .nb-house-card-actions {
   display: flex;
-  gap: var(--nb-space-2);
+  gap: 8px;
 }
 
 .nb-houses-loading {
@@ -1032,16 +1015,16 @@ html, body {
 }
 
 .nb-dialog-subtitle {
-  margin: 0 0 var(--nb-space-4);
+  margin: 0 0 16px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-secondary);
 }
 
-.nb-dialog-field { margin-bottom: var(--nb-space-3) !important; }
-.nb-dialog-alert { margin-top: var(--nb-space-2) !important; }
+.nb-dialog-field { margin-bottom: 12px !important; }
+.nb-dialog-alert { margin-top: 8px !important; }
 
 .nb-dialog-body {
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
   font: var(--nb-font-body);
 }
 
@@ -1067,11 +1050,11 @@ html, body {
 
 .nb-perms-header,
 .nb-roles-feature-sub {
-  margin-bottom: var(--nb-space-4);
+  margin-bottom: 16px;
 }
 
 .nb-perms-title {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
   color: var(--nb-color-text-primary);
@@ -1085,14 +1068,14 @@ html, body {
 }
 
 .nb-perms-callout {
-  margin-bottom: var(--nb-space-4) !important;
+  margin-bottom: 16px !important;
 }
 
 .nb-perms-panel {
   background: var(--nb-color-surface) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
   border-radius: var(--nb-radius-card) !important;
-  padding: var(--nb-space-2) var(--nb-space-3) var(--nb-space-4);
+  padding: 8px 12px 16px;
 }
 
 .nb-perms-table {
@@ -1111,7 +1094,7 @@ html, body {
 }
 
 .nb-perms-count {
-  margin: var(--nb-space-3) var(--nb-space-2) 0;
+  margin: 12px 8px 0;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
@@ -1143,7 +1126,7 @@ html, body {
 
 .nb-proposed-tag {
   display: inline-block;
-  margin-left: var(--nb-space-2);
+  margin-left: 8px;
   padding: 1px 6px;
   border-radius: 4px;
   font-size: 11px;
@@ -1155,24 +1138,24 @@ html, body {
 
 .nb-perm-disable-effects,
 .nb-perm-disable-roles {
-  margin: var(--nb-space-2) 0;
-  padding-left: var(--nb-space-5);
+  margin: 8px 0;
+  padding-left: 20px;
 }
 
 .nb-perm-disable-inuse-label {
   display: block;
-  margin-top: var(--nb-space-3);
+  margin-top: 12px;
 }
 
 .nb-perm-disable-restore {
-  margin: var(--nb-space-2) 0 0;
+  margin: 8px 0 0;
   font: var(--nb-font-helper);
 }
 
 .nb-roles-split {
   display: grid;
   grid-template-columns: minmax(200px, 280px) 1fr;
-  gap: var(--nb-space-5);
+  gap: 20px;
   align-items: start;
 }
 
@@ -1180,24 +1163,24 @@ html, body {
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
-  padding: var(--nb-space-4);
+  padding: 16px;
 }
 
 .nb-roles-master-heading {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
 }
 
 .nb-roles-master-hint {
-  margin: 0 0 var(--nb-space-3);
+  margin: 0 0 12px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
 
 .nb-roles-list-item {
   border-radius: var(--nb-radius-input) !important;
-  margin-bottom: var(--nb-space-1) !important;
+  margin-bottom: 4px !important;
 }
 
 .nb-roles-list-item.is-selected {
@@ -1224,18 +1207,18 @@ html, body {
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
-  padding: var(--nb-space-4);
+  padding: 16px;
   min-height: 280px;
 }
 
 .nb-roles-detail-title {
-  margin: 0 0 var(--nb-space-1);
+  margin: 0 0 4px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
 }
 
 .nb-roles-detail-sub {
-  margin: 0 0 var(--nb-space-4);
+  margin: 0 0 16px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-secondary);
 }
@@ -1254,13 +1237,13 @@ html, body {
 }
 
 .nb-roles-empty h3 {
-  margin: 0 0 var(--nb-space-2);
+  margin: 0 0 8px;
   font: var(--nb-font-title);
   color: var(--nb-color-text-primary);
 }
 
 .nb-roles-perm-group-label {
-  margin: var(--nb-space-4) 0 var(--nb-space-2);
+  margin: 16px 0 8px;
   font: var(--nb-font-label);
   font-size: 12px;
   letter-spacing: 0.04em;
@@ -1272,11 +1255,11 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--nb-space-3);
-  padding: var(--nb-space-3);
+  gap: 12px;
+  padding: 12px;
   border-radius: var(--nb-radius-input);
   border: var(--nb-border-width-hairline) solid transparent;
-  margin-bottom: var(--nb-space-1);
+  margin-bottom: 4px;
 }
 
 .nb-roles-perm-row.is-locked {
@@ -1302,13 +1285,13 @@ html, body {
 }
 
 .nb-roles-lock-badge {
-  margin-top: var(--nb-space-1);
+  margin-top: 4px;
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
 }
 
 .nb-roles-login-warn {
-  margin: 0 0 var(--nb-space-2) !important;
+  margin: 0 0 8px !important;
 }
 
 .nb-roles-dirty-bar {
@@ -1318,9 +1301,9 @@ html, body {
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--nb-space-3);
-  margin-top: var(--nb-space-5);
-  padding: var(--nb-space-3) var(--nb-space-4) !important;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 12px 16px !important;
   background: var(--nb-color-surface) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
   border-radius: var(--nb-radius-card) !important;
@@ -1334,7 +1317,7 @@ html, body {
 
 .nb-roles-dirty-actions {
   display: flex;
-  gap: var(--nb-space-2);
+  gap: 8px;
 }
 
 .nb-roles-save {
@@ -1343,7 +1326,7 @@ html, body {
 }
 
 .nb-roles-back {
-  margin-bottom: var(--nb-space-3) !important;
+  margin-bottom: 12px !important;
   text-transform: none !important;
 }
 
@@ -1376,7 +1359,7 @@ html, body {
 }
 
 .nb-account-menu-divider {
-  margin: var(--nb-space-1) 0 !important;
+  margin: 4px 0 !important;
 }
 
 .nb-account-menu-signout {
@@ -1390,8 +1373,8 @@ html, body {
 .nb-drawer-section {
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
-  padding: var(--nb-space-2) var(--nb-space-nav-item-x);
-  margin-bottom: var(--nb-space-1);
+  padding: 8px 16px;
+  margin-bottom: 4px;
   text-transform: none;
   letter-spacing: 0;
 }
@@ -1403,9 +1386,9 @@ html, body {
 .nb-profile-avatar-card {
   display: flex;
   align-items: center;
-  gap: var(--nb-space-3);
-  padding: var(--nb-space-3);
-  margin-bottom: var(--nb-space-4);
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
   background: var(--nb-color-surface-subtle);
@@ -1431,8 +1414,8 @@ html, body {
 .nb-profile-email-label-row {
   display: flex;
   align-items: center;
-  gap: var(--nb-space-2);
-  margin-bottom: var(--nb-space-1);
+  gap: 8px;
+  margin-bottom: 4px;
 }
 
 .nb-profile-email-label {
@@ -1453,7 +1436,7 @@ html, body {
 
 .nb-profile-pwd-link {
   text-transform: none !important;
-  margin: var(--nb-space-2) 0 var(--nb-space-1) !important;
+  margin: 8px 0 4px !important;
   padding-left: 0 !important;
 }
 
@@ -1476,8 +1459,8 @@ html, body {
 .nb-profile-page-bar {
   display: flex;
   align-items: center;
-  gap: var(--nb-space-2);
-  margin-bottom: var(--nb-space-3);
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .nb-profile-page-title {
@@ -1489,7 +1472,7 @@ html, body {
 }
 
 .nb-profile-page-card {
-  padding: var(--nb-space-4) !important;
+  padding: 16px !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
   border-radius: var(--nb-radius-card) !important;
   background: var(--nb-color-surface) !important;
@@ -1498,6 +1481,6 @@ html, body {
 .nb-profile-page-actions {
   display: flex;
   flex-direction: column;
-  gap: var(--nb-space-2);
-  margin-top: var(--nb-space-4);
+  gap: 8px;
+  margin-top: 16px;
 }

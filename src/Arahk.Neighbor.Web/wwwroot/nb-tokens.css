@@ -1,18 +1,12 @@
 /**
- * Neighbor (เพื่อนบ้าน) — Design System Tokens (canonical)
+ * Neighbor (เพื่อนบ้าน) — Design System Tokens
  * ========================================================
- * Programmer MUST import/port THIS file only as the single source of truth
- * for colors, spacing, radii, typography, and control sizes across the app.
- *
- * Rules:
- * 1. New UI MUST reference these `--nb-*` tokens only.
- * 2. Do NOT hardcode design px / hex outside this file (use var(--nb-…)).
- * 3. Numeric values match the QA-approved auth UI package
- *    (/workspace/neighbor-auth-ui/tokens.css) — renamed with `--nb-` prefix.
- * 4. Migration from auth token names → see token-mapping.md
- *
- * Palette locked: Primary #2F9E7A · Background #F7F3EB · Accent #E8A25B
- * Wordmark: "Neighbor" (no logo)
+ * CANONICAL (SoT): colors · typography · radii · borders · shadows · motion · overlay/z
+ * DEPRECATED (not SoT): --nb-space-* · --nb-size-* — MudBlazor 9 utilities + Size enum
+ *   → 01-spacing-sizing.md · mud-spacing-size-mapping.md (DS package)
+ *   → App: MudBlazor 9.10.0 · AppBar height prefer Mud 64 (not Dense/56)
+ * Palette: Primary #2F9E7A · BG #F7F3EB · Accent #E8A25B · Wordmark Neighbor
+ * Updated: 23 Sep 2026 ICT — MudBlazor 9 Size/Spacing alignment
  */
 
 :root {
@@ -58,39 +52,6 @@
   /* Primary button soft shadow tint (from approved auth recipe) */
   --nb-color-primary-shadow: rgba(47, 158, 122, 0.25);
   --nb-color-primary-shadow-strong: rgba(47, 158, 122, 0.35);
-
-  /* ========== Spacing (4/8-based scale) ========== */
-  --nb-space-1: 4px;
-  --nb-space-2: 8px;
-  --nb-space-3: 12px;
-  --nb-space-4: 16px;
-  --nb-space-5: 20px;
-  --nb-space-6: 24px;
-  --nb-space-7: 28px;
-  --nb-space-8: 32px;
-  --nb-space-10: 40px;
-  --nb-space-12: 48px;
-
-  /* Semantic layout spacing (values = scale or approved auth pads) */
-  --nb-space-page-x-mobile: 16px;   /* = space-4 */
-  --nb-space-page-y-mobile: 24px;   /* = space-6 */
-  --nb-space-page-desktop: 48px;   /* = space-12 */
-  --nb-space-card-x: 24px;         /* = space-6 */
-  --nb-space-card-y: 32px;         /* = space-8 */
-  --nb-space-field-gap: 16px;      /* = space-4 */
-  --nb-space-label-gap: 6px;       /* label → control; approved auth */
-  --nb-space-helper-gap: 6px;      /* control → helper/error */
-  --nb-space-toggle-pad: 3px;      /* segmented tray inset */
-  --nb-space-input-x: 14px;        /* input horizontal padding */
-  --nb-space-button-x: 20px;       /* = space-5 */
-  --nb-space-toast-y: 12px;        /* = space-3 */
-  --nb-space-toast-x: 18px;        /* toast horizontal pad */
-  --nb-space-toast-offset: 24px;   /* = space-6 · distance from viewport edge */
-  --nb-space-terms-gap: 10px;      /* checkbox ↔ terms text */
-  --nb-space-after-toggle: 20px;   /* = space-5 · toggle → first field */
-  --nb-space-link-mt: 16px;        /* = space-4 */
-  --nb-space-link-muted-mt: 12px;  /* = space-3 */
-  --nb-space-secondary-btn-mt: 12px;
 
   /* ========== Radii ========== */
   --nb-radius-input: 10px;
@@ -152,25 +113,6 @@
   --nb-line-height-tagline: 1.4;
   --nb-line-height-toggle: 1.3;
 
-  /* ========== Control / layout sizes ========== */
-  --nb-size-input-height: 48px;
-  --nb-size-button-height: 48px;
-  --nb-size-otp-cell: 48px;
-  --nb-size-otp-gap: 8px;
-  --nb-size-checkbox: 20px;
-  --nb-size-toggle-height: 44px;
-  --nb-size-icon-eye: 20px;
-  --nb-size-eye-btn: 36px;
-  --nb-size-spinner: 18px;
-  --nb-size-spinner-border: 2px;
-
-  --nb-size-card-width-mobile: 390px;
-  --nb-size-card-width-desktop: 420px;
-  --nb-size-viewport-desktop: 1280px;
-
-  /* Input with eye: right padding clears the eye button */
-  --nb-size-input-pad-right-eye: 48px;
-
   /* ========== Borders ========== */
   --nb-border-width: 1.5px;
   --nb-border-width-focus: 2px;
@@ -195,31 +137,7 @@
   --nb-color-spinner-track: rgba(255, 255, 255, 0.35);
 
   /* Wordmark tracking */
-  /* Wordmark tracking */
   --nb-letter-spacing-wordmark: 0.01em;
-
-  /* ========== App Layout (Home shell — from neighbor-home-ui) ========== */
-  --nb-size-appbar-height: 56px;
-  --nb-size-drawer-width: 272px;
-  --nb-size-menu-btn: 40px;
-  --nb-size-signout-height: 40px;
-  --nb-size-main-max: 720px;
-  --nb-size-illustration-h-mobile: 200px;
-  --nb-size-illustration-h-desktop: 280px;
-  --nb-size-alert-icon: 24px;
-  --nb-size-mobile-frame: 390px;
-  --nb-size-tip-border: 3px;
-
-  --nb-space-appbar-x: 12px;   /* narrower than --nb-space-nav-item-x (14px); live feedback */
-  --nb-space-drawer-x: 12px;
-  --nb-space-drawer-y: 16px;
-  --nb-space-nav-item-y: 12px;
-  --nb-space-nav-item-x: 14px;
-  --nb-space-main-mobile: 20px;
-  --nb-space-main-desktop-x: 40px;
-  --nb-space-main-desktop-y: 32px;
-  --nb-space-welcome-y: 28px;
-  --nb-space-welcome-x: 24px;
 
   --nb-color-overlay: rgba(26, 26, 26, 0.4);
   --nb-shadow-drawer: 4px 0 24px rgba(26, 26, 26, 0.12);
@@ -227,4 +145,60 @@
   --nb-z-overlay: 30;
   --nb-z-drawer: 40;
   --nb-z-frame-label: 100;
+
+  /* ========== DEPRECATED — Spacing & Size (use MudBlazor) ==========
+   * @deprecated — NOT source of truth. New UI MUST NOT use these.
+   * Spacing → Mud pa/ma/gap/MudStack (N×4px). Size → Size.Small|Medium|Large.
+   * Off-grid snaps: 6→8, 3→4, 14→16, terms 10→8, toast-x 18→16.
+   * Chrome: AppBar px-3=12, nav px-4=16, AppBar height 64 (Mud default).
+   * ================================================================== */
+
+  /* @deprecated scale — prefer Mud *-N */
+  --nb-space-1: 4px;
+  --nb-space-2: 8px;
+  --nb-space-3: 12px;
+  --nb-space-4: 16px;
+  --nb-space-5: 20px;
+  --nb-space-6: 24px;
+  --nb-space-7: 28px;
+  --nb-space-8: 32px;
+  --nb-space-10: 40px;
+  --nb-space-12: 48px;
+
+  /* @deprecated semantic — prefer Mud utilities (snapped) */
+  --nb-space-page-x-mobile: 16px;   /* Mud px-4 */
+  --nb-space-page-y-mobile: 24px;   /* Mud py-6 */
+  --nb-space-page-desktop: 48px;   /* Mud pa-12 */
+  --nb-space-card-x: 24px;         /* Mud px-6 */
+  --nb-space-card-y: 32px;         /* Mud py-8 */
+  --nb-space-field-gap: 16px;      /* Mud gap-4 / mb-4 */
+  --nb-space-label-gap: 8px;       /* SNAP 6→8 · Mud mb-2 */
+  --nb-space-helper-gap: 8px;      /* SNAP 6→8 · Mud mt-2 */
+  --nb-space-toggle-pad: 4px;      /* SNAP 3→4 · Mud p-1 */
+  --nb-space-input-x: 16px;        /* SNAP 14→16 · Mud px-4 */
+  --nb-space-button-x: 20px;       /* Mud px-5 */
+  --nb-space-toast-y: 12px;        /* Mud py-3 */
+  --nb-space-toast-x: 16px;        /* SNAP 18→16 · Mud px-4 */
+  --nb-space-toast-offset: 24px;   /* Mud ma-6 */
+  --nb-space-terms-gap: 8px;       /* SNAP 10→8 · Mud gap-2 */
+  --nb-space-after-toggle: 20px;   /* Mud mt-5 */
+  --nb-space-link-mt: 16px;        /* Mud mt-4 */
+  --nb-space-link-muted-mt: 12px;  /* Mud mt-3 */
+  --nb-space-secondary-btn-mt: 12px; /* Mud mt-3 */
+
+  /* @deprecated control sizes — prefer Mud Size (padding-driven; do NOT force 48px) */
+  --nb-size-input-height: 48px;    /* was SoT → form fields use Mud defaults / Large CTAs */
+  --nb-size-button-height: 48px;   /* was SoT → Size.Large on primary CTA */
+  --nb-size-otp-cell: 48px;        /* layout one-off */
+  --nb-size-otp-gap: 8px;          /* Mud gap-2 */
+  --nb-size-checkbox: 20px;        /* MudCheckBox Size.Medium typical */
+  --nb-size-toggle-height: 44px;   /* layout — not SoT */
+  --nb-size-icon-eye: 20px;
+  --nb-size-eye-btn: 36px;
+  --nb-size-spinner: 18px;
+  --nb-size-spinner-border: 2px;
+  --nb-size-card-width-mobile: 390px;   /* layout constant */
+  --nb-size-card-width-desktop: 420px;  /* layout constant */
+  --nb-size-viewport-desktop: 1280px;
+  --nb-size-input-pad-right-eye: 48px;
 }

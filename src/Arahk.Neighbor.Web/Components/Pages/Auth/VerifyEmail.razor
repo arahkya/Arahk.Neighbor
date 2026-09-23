@@ -40,9 +40,9 @@
     </MudAlert>
 }
 
-<div class="auth-form-actions">
+<div class="auth-form-actions mt-2 d-flex flex-column gap-3">
     <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-               OnClick="VerifyAsync" Class="auth-cta" Size="Size.Large">
+               OnClick="VerifyAsync" Class="auth-cta px-5" Size="Size.Large">
         @if (_busy)
         {
             <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
@@ -59,7 +59,7 @@
     </MudButton>
 </div>
 
-<div class="auth-footer muted">
+<div class="auth-footer muted mt-3">
     <MudLink Href="/register">@ThaiCopy.T("otp.back")</MudLink>
 </div>
 
