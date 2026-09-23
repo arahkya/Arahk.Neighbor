@@ -1,0 +1,54 @@
+@inject HouseService Houses
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@ThaiCopy.T("houses.delete.title")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <p class="nb-dialog-body">@ThaiCopy.Format("houses.delete.body", ("houseNo", HouseNo))</p>
+        <p class="nb-dialog-warn">@ThaiCopy.T("houses.delete.warn")</p>
+        @if (!string.IsNullOrEmpty(_error))
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="nb-dialog-alert">@_error</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="Cancel">@ThaiCopy.T("houses.delete.cancel")</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" Disabled="_busy" OnClick="ConfirmAsync">
+            @ThaiCopy.T("houses.delete.confirm")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public Guid HouseId { get; set; }
+    [Parameter] public string HouseNo { get; set; } = string.Empty;
+
+    private string? _error;
+    private bool _busy;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task ConfirmAsync()
+    {
+        _error = null;
+        _busy = true;
+        try
+        {
+            var result = await Houses.DeleteAsync(HouseConstants.DefaultCommunityId, HouseId);
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                return;
+            }
+
+            _error = ThaiCopy.T(result.ErrorKey ?? ErrorKeys.HouseDeleteFailed);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

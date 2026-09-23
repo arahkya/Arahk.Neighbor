@@ -11,6 +11,7 @@ public static class DependencyInjection
         services.AddScoped<LoginService>();
         services.AddScoped<VerifyOtpService>();
         services.AddScoped<ResendOtpService>();
+        services.AddScoped<HouseService>();
         return services;
     }
 }

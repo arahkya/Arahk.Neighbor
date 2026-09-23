@@ -75,8 +75,10 @@
                         OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.visitor")))">
                 @ThaiCopy.T("nav.visitor")
             </MudNavLink>
-            <MudNavLink Class="nb-nav-link"
-                        OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.master_data")))">
+            <MudNavLink Href="/master"
+                        Match="NavLinkMatch.Prefix"
+                        Class="nb-nav-link"
+                        OnClick="OnMasterNav">
                 @ThaiCopy.T("nav.master_data")
             </MudNavLink>
         </MudNavMenu>
@@ -170,6 +172,12 @@
     private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
 
     private void OnHomeNav()
+    {
+        Shell.ClearComingSoon();
+        CloseDrawerIfMobile();
+    }
+
+    private void OnMasterNav()
     {
         Shell.ClearComingSoon();
         CloseDrawerIfMobile();

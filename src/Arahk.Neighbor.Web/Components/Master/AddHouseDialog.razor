@@ -1,0 +1,101 @@
+@inject HouseService Houses
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">@ThaiCopy.T("houses.add.title")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <p class="nb-dialog-subtitle">@ThaiCopy.T("houses.add.subtitle")</p>
+        <MudForm @ref="_form">
+            <MudTextField @bind-Value="_houseNo"
+                          Label="@ThaiCopy.T("houses.add.field.house_no")"
+                          Placeholder="@ThaiCopy.T("houses.add.placeholder.house_no")"
+                          HelperText="@ThaiCopy.T("houses.add.helper.house_no")"
+                          Required="true"
+                          RequiredError="@ThaiCopy.T("houses.error.house_no_required")"
+                          MaxLength="32"
+                          Immediate="true"
+                          Error="@(!string.IsNullOrEmpty(_houseNoError))"
+                          ErrorText="@_houseNoError"
+                          Class="nb-dialog-field"
+                          Variant="Variant.Outlined" />
+            <MudTextField @bind-Value="_soi"
+                          Label="@ThaiCopy.T("houses.add.field.soi_optional")"
+                          Placeholder="@ThaiCopy.T("houses.add.placeholder.soi")"
+                          MaxLength="100"
+                          Immediate="true"
+                          Error="@(!string.IsNullOrEmpty(_soiError))"
+                          ErrorText="@_soiError"
+                          Class="nb-dialog-field"
+                          Variant="Variant.Outlined" />
+        </MudForm>
+        @if (!string.IsNullOrEmpty(_formError))
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="nb-dialog-alert">@_formError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Text" Disabled="_busy" OnClick="Cancel">@ThaiCopy.T("houses.action.cancel")</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SaveAsync">
+            @ThaiCopy.T("houses.action.save")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    private MudForm _form = default!;
+    private string? _houseNo;
+    private string? _soi;
+    private string? _houseNoError;
+    private string? _soiError;
+    private string? _formError;
+    private bool _busy;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private async Task SaveAsync()
+    {
+        _houseNoError = null;
+        _soiError = null;
+        _formError = null;
+        await _form.ValidateAsync();
+
+        _busy = true;
+        try
+        {
+            var result = await Houses.CreateAsync(
+                HouseConstants.DefaultCommunityId,
+                new CreateHouseRequest(_houseNo, _soi));
+
+            if (result.Succeeded)
+            {
+                MudDialog.Close(DialogResult.Ok(true));
+                return;
+            }
+
+            if (result.FieldErrors.TryGetValue("houseNo", out var noErr))
+                _houseNoError = FormatFieldError(noErr);
+            if (result.FieldErrors.TryGetValue("soi", out var soiErr))
+                _soiError = FormatFieldError(soiErr);
+            if (!string.IsNullOrEmpty(result.ErrorKey))
+                _formError = ThaiCopy.T(result.ErrorKey);
+            if (string.IsNullOrEmpty(_houseNoError) && string.IsNullOrEmpty(_soiError) && string.IsNullOrEmpty(_formError))
+                _formError = ThaiCopy.T(ErrorKeys.HouseServer);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string FormatFieldError(string key)
+    {
+        if (key == ErrorKeys.HouseNoTooLong)
+            return ThaiCopy.Format(key, ("max", HouseConstants.HouseNoMaxLength));
+        if (key == ErrorKeys.SoiTooLong)
+            return ThaiCopy.Format(key, ("max", HouseConstants.SoiMaxLength));
+        return ThaiCopy.T(key);
+    }
+}

@@ -1,0 +1,130 @@
+@page "/master"
+@page "/master/houses"
+@layout AppLayout
+@rendermode InteractiveServer
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+@using MudBlazor.Services
+@inject AuthSessionState Session
+@inject AppShellState Shell
+@inject NavigationManager Nav
+@inject IBrowserViewportService BrowserViewport
+
+@if (!Session.IsAuthenticated)
+{
+    <p class="nb-loading">@ThaiCopy.T("state.loading")</p>
+}
+else
+{
+    <section class="nb-master" aria-label="@ThaiCopy.T("houses.a11y.page")">
+        <h1 class="nb-master-title">@ThaiCopy.T("master.page.title")</h1>
+        <p class="nb-master-subtitle">@ThaiCopy.T("master.page.subtitle")</p>
+
+        @if (_isBelowMd)
+        {
+            <div class="nb-master-select-wrap">
+                <MudSelect T="string"
+                           Value="@MasterSection.Houses"
+                           ValueChanged="OnSectionChanged"
+                           Label="@ThaiCopy.T("master.select.label")"
+                           Variant="Variant.Outlined"
+                           Class="nb-master-select"
+                           FullWidth="true"
+                           AnchorOrigin="Origin.BottomCenter"
+                           TransformOrigin="Origin.TopCenter"
+                           aria-label="@ThaiCopy.T("master.select.aria")">
+                    <MudSelectItem T="string" Value="@MasterSection.Houses">@ThaiCopy.T("master.tab.houses")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Calendar" Disabled="true">@ThaiCopy.T("master.tab.calendar")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Activities" Disabled="true">@ThaiCopy.T("master.tab.activities")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Announcements" Disabled="true">@ThaiCopy.T("master.tab.announcements")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Users" Disabled="true">@ThaiCopy.T("master.tab.users")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Roles" Disabled="true">@ThaiCopy.T("master.tab.roles")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Permissions" Disabled="true">@ThaiCopy.T("master.tab.permissions")</MudSelectItem>
+                </MudSelect>
+            </div>
+            <HousesPanel />
+        }
+        else
+        {
+            <MudTabs Elevation="0"
+                     Rounded="false"
+                     Class="nb-master-tabs"
+                     ActivePanelIndex="0">
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.houses")" Class="nb-master-tab-panel">
+                    <HousesPanel />
+                </MudTabPanel>
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.calendar")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.activities")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.announcements")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.users")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.roles")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.permissions")" Disabled="true" />
+            </MudTabs>
+        }
+    </section>
+}
+
+@code {
+    private bool _isBelowMd = true;
+    private Guid _observerId = Guid.NewGuid();
+
+    Guid IBrowserViewportObserver.Id => _observerId;
+    ResizeOptions? IBrowserViewportObserver.ResizeOptions => null;
+
+    protected override void OnInitialized()
+    {
+        if (!Session.IsAuthenticated)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+        Shell.ClearComingSoon();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await BrowserViewport.SubscribeAsync(this, fireImmediately: true);
+    }
+
+    async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs args)
+    {
+        var belowMd = !await BrowserViewport.IsBreakpointWithinWindowSizeAsync(Breakpoint.MdAndUp);
+        if (_isBelowMd != belowMd)
+        {
+            _isBelowMd = belowMd;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private Task OnSectionChanged(string value)
+    {
+        // Only Houses is selectable this round; keep value locked.
+        return Task.CompletedTask;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await BrowserViewport.UnsubscribeAsync(this);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+
+    private static class MasterSection
+    {
+        public const string Houses = "houses";
+        public const string Calendar = "calendar";
+        public const string Activities = "activities";
+        public const string Announcements = "announcements";
+        public const string Users = "users";
+        public const string Roles = "roles";
+        public const string Permissions = "permissions";
+    }
+}

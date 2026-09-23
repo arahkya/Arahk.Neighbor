@@ -1,0 +1,401 @@
+@inject HouseService Houses
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IBrowserViewportService BrowserViewport
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+@using MudBlazor.Services
+
+<div class="nb-houses">
+    <div class="nb-houses-header">
+        <div>
+            <h2 class="nb-houses-title">@ThaiCopy.T("houses.page.title")</h2>
+            <p class="nb-houses-subtitle">@ThaiCopy.T("houses.page.subtitle")</p>
+        </div>
+        <div class="nb-houses-toolbar">
+            <MudButton Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       Class="nb-houses-btn-add"
+                       OnClick="OpenAddAsync">
+                + @ThaiCopy.T("houses.action.add")
+            </MudButton>
+            <MudButton Variant="Variant.Outlined"
+                       Class="nb-houses-btn-import"
+                       OnClick="ToggleImport">
+                @(_importOpen ? ThaiCopy.T("houses.action.collapse_import") : ThaiCopy.T("houses.action.import"))
+            </MudButton>
+        </div>
+    </div>
+
+    @if (_importOpen)
+    {
+        <MudPaper Class="nb-houses-import" Elevation="0" aria-label="@ThaiCopy.T("houses.a11y.import_region")">
+            <h3 class="nb-houses-import-title">@ThaiCopy.T("houses.import.title")</h3>
+
+            <div class="nb-houses-guide">
+                <h4 class="nb-houses-guide-title">@ThaiCopy.T("houses.import.guide.title")</h4>
+                <ol class="nb-houses-guide-steps">
+                    <li>@((MarkupString)FormatBold(ThaiCopy.T("houses.import.guide.step1")))</li>
+                    <li>@((MarkupString)FormatBold(ThaiCopy.T("houses.import.guide.step2")))</li>
+                    <li>@((MarkupString)FormatBold(ThaiCopy.T("houses.import.guide.step3")))</li>
+                    <li>@((MarkupString)FormatBold(ThaiCopy.T("houses.import.guide.step4")))</li>
+                    <li>@((MarkupString)FormatBold(ThaiCopy.T("houses.import.guide.step5")))</li>
+                </ol>
+                <ul class="nb-houses-guide-notes">
+                    <li>@ThaiCopy.T("houses.import.guide.note_sheet")</li>
+                    <li>@ThaiCopy.T("houses.import.guide.note_header")</li>
+                    <li>@ThaiCopy.T("houses.import.guide.note_required")</li>
+                    <li>@ThaiCopy.T("houses.import.guide.note_dup")</li>
+                </ul>
+                <p class="nb-houses-guide-caption">@ThaiCopy.T("houses.import.guide.example_caption")</p>
+                <MudSimpleTable Dense="true" Class="nb-houses-guide-table" Hover="false" Bordered="true">
+                    <thead>
+                        <tr>
+                            <th>HouseNo</th>
+                            <th>Soi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>12/1</td><td>ซอยร่มเงา</td></tr>
+                        <tr><td>12/2</td><td></td></tr>
+                        <tr><td>15</td><td>ซอยมะพร้าว</td></tr>
+                    </tbody>
+                </MudSimpleTable>
+                <p class="nb-houses-guide-example-note">@ThaiCopy.T("houses.import.guide.example_note")</p>
+            </div>
+
+            <div class="nb-houses-upload">
+                <p class="nb-houses-upload-title">@ThaiCopy.T("houses.import.upload.title")</p>
+                <p class="nb-houses-upload-hint">@ThaiCopy.T("houses.import.upload.hint")</p>
+                <InputFile OnChange="OnFileSelected"
+                           accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                           class="nb-houses-file-input"
+                           disabled="@_importing" />
+                @if (!string.IsNullOrEmpty(_selectedFileName))
+                {
+                    <p class="nb-houses-file-name">@ThaiCopy.Format("houses.import.file_selected", ("fileName", _selectedFileName))</p>
+                }
+                @if (_importing)
+                {
+                    <MudProgressLinear Indeterminate="true" Class="nb-houses-import-progress" Color="Color.Primary" />
+                    <p class="nb-houses-import-working">@ThaiCopy.T("houses.import.working")</p>
+                }
+            </div>
+
+            @if (_importAlert is not null)
+            {
+                <MudAlert Severity="_importAlert.Severity"
+                          Variant="Variant.Outlined"
+                          Class="nb-houses-import-alert"
+                          CloseIconClicked="DismissImportAlert"
+                          ShowCloseIcon="true">
+                    <strong>@_importAlert.Title</strong>
+                    <div>@_importAlert.Body</div>
+                </MudAlert>
+            }
+        </MudPaper>
+    }
+
+    @if (_loading)
+    {
+        <p class="nb-houses-loading">@ThaiCopy.T("houses.table.loading")</p>
+    }
+    else if (_items.Count == 0)
+    {
+        <MudPaper Class="nb-houses-empty" Elevation="0">
+            <h3 class="nb-houses-empty-title">@ThaiCopy.T("houses.empty.title")</h3>
+            <p class="nb-houses-empty-body">@ThaiCopy.T("houses.empty.body")</p>
+            <p class="nb-houses-empty-hint">@ThaiCopy.T("houses.empty.hint")</p>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddAsync">
+                + @ThaiCopy.T("houses.action.add")
+            </MudButton>
+        </MudPaper>
+    }
+    else if (_isBelowMd)
+    {
+        <div class="nb-house-cards">
+            @foreach (var item in _items)
+            {
+                <article class="nb-house-card">
+                    <p class="nb-house-card-meta">
+                        <span class="nb-house-card-no">@item.HouseNo</span>
+                        ·
+                        <span class="nb-house-card-soi @(string.IsNullOrEmpty(item.Soi) ? "is-empty" : null)">
+                            @(string.IsNullOrEmpty(item.Soi) ? ThaiCopy.T("houses.table.soi_empty") : item.Soi)
+                        </span>
+                    </p>
+                    <div class="nb-house-card-actions">
+                        <MudButton Size="Size.Small"
+                                   Variant="Variant.Outlined"
+                                   aria-label="@ThaiCopy.Format("houses.table.edit_aria", ("houseNo", item.HouseNo))"
+                                   OnClick="@(() => OpenEditAsync(item))">
+                            @ThaiCopy.T("houses.action.edit")
+                        </MudButton>
+                        <MudButton Size="Size.Small"
+                                   Variant="Variant.Text"
+                                   Color="Color.Error"
+                                   aria-label="@ThaiCopy.Format("houses.table.delete_aria", ("houseNo", item.HouseNo))"
+                                   OnClick="@(() => OpenDeleteAsync(item))">
+                            @ThaiCopy.T("houses.action.delete")
+                        </MudButton>
+                    </div>
+                </article>
+            }
+        </div>
+        <p class="nb-houses-count">@CountLabel</p>
+    }
+    else
+    {
+        <MudPaper Class="nb-houses-table-panel" Elevation="0">
+            <MudTable Items="_items" Dense="false" Hover="true" Class="nb-houses-table" Breakpoint="Breakpoint.None">
+                <HeaderContent>
+                    <MudTh>@ThaiCopy.T("houses.table.house_no")</MudTh>
+                    <MudTh>@ThaiCopy.T("houses.table.soi")</MudTh>
+                    <MudTh Class="nb-houses-th-actions">@ThaiCopy.T("houses.table.actions")</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@ThaiCopy.T("houses.table.house_no")">@context.HouseNo</MudTd>
+                    <MudTd DataLabel="@ThaiCopy.T("houses.table.soi")" Class="@(string.IsNullOrEmpty(context.Soi) ? "nb-houses-soi-empty" : null)">
+                        @(string.IsNullOrEmpty(context.Soi) ? ThaiCopy.T("houses.table.soi_empty") : context.Soi)
+                    </MudTd>
+                    <MudTd DataLabel="@ThaiCopy.T("houses.table.actions")" Class="nb-houses-td-actions">
+                        <div class="nb-houses-row-actions">
+                            <MudButton Size="Size.Small"
+                                       Variant="Variant.Outlined"
+                                       aria-label="@ThaiCopy.Format("houses.table.edit_aria", ("houseNo", context.HouseNo))"
+                                       OnClick="@(() => OpenEditAsync(context))">
+                                @ThaiCopy.T("houses.action.edit")
+                            </MudButton>
+                            <MudButton Size="Size.Small"
+                                       Variant="Variant.Text"
+                                       Color="Color.Error"
+                                       aria-label="@ThaiCopy.Format("houses.table.delete_aria", ("houseNo", context.HouseNo))"
+                                       OnClick="@(() => OpenDeleteAsync(context))">
+                                @ThaiCopy.T("houses.action.delete")
+                            </MudButton>
+                        </div>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+            <p class="nb-houses-count">@CountLabel</p>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    private readonly Guid _communityId = HouseConstants.DefaultCommunityId;
+    private List<HouseDto> _items = new();
+    private bool _loading = true;
+    private bool _importOpen;
+    private bool _importing;
+    private string? _selectedFileName;
+    private ImportAlertState? _importAlert;
+    private bool _isBelowMd = true;
+    private Guid _observerId = Guid.NewGuid();
+
+    private string CountLabel =>
+        _items.Count == 1
+            ? ThaiCopy.T("houses.count_one")
+            : ThaiCopy.Format("houses.count", ("n", _items.Count));
+
+    Guid IBrowserViewportObserver.Id => _observerId;
+    ResizeOptions? IBrowserViewportObserver.ResizeOptions => null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ReloadAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await BrowserViewport.SubscribeAsync(this, fireImmediately: true);
+    }
+
+    async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs args)
+    {
+        var belowMd = !await BrowserViewport.IsBreakpointWithinWindowSizeAsync(Breakpoint.MdAndUp);
+        if (_isBelowMd != belowMd)
+        {
+            _isBelowMd = belowMd;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task ReloadAsync()
+    {
+        _loading = true;
+        _items = (await Houses.ListAsync(_communityId)).ToList();
+        _loading = false;
+    }
+
+    private void ToggleImport()
+    {
+        _importOpen = !_importOpen;
+        if (!_importOpen)
+        {
+            _selectedFileName = null;
+            _importAlert = null;
+        }
+    }
+
+    private void DismissImportAlert() => _importAlert = null;
+
+    private async Task OpenAddAsync()
+    {
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<AddHouseDialog>(ThaiCopy.T("houses.add.title"), options);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
+        {
+            await ReloadAsync();
+            Snackbar.Add(ThaiCopy.T("houses.success.added"), Severity.Success);
+        }
+    }
+
+    private async Task OpenEditAsync(HouseDto item)
+    {
+        var parameters = new DialogParameters<EditHouseDialog>
+        {
+            { x => x.HouseId, item.Id },
+            { x => x.HouseNo, item.HouseNo },
+            { x => x.Soi, item.Soi }
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<EditHouseDialog>(ThaiCopy.T("houses.edit.title"), parameters, options);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
+        {
+            await ReloadAsync();
+            Snackbar.Add(ThaiCopy.T("houses.success.updated"), Severity.Success);
+        }
+    }
+
+    private async Task OpenDeleteAsync(HouseDto item)
+    {
+        var parameters = new DialogParameters<DeleteHouseDialog>
+        {
+            { x => x.HouseId, item.Id },
+            { x => x.HouseNo, item.HouseNo }
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true, CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<DeleteHouseDialog>(ThaiCopy.T("houses.delete.title"), parameters, options);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled)
+        {
+            await ReloadAsync();
+            Snackbar.Add(ThaiCopy.T("houses.success.deleted"), Severity.Success);
+        }
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file is null) return;
+
+        _selectedFileName = file.Name;
+        _importAlert = null;
+        _importing = true;
+        StateHasChanged();
+
+        try
+        {
+            await using var stream = file.OpenReadStream(HouseConstants.ExcelMaxBytes);
+            await using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            ms.Position = 0;
+
+            var result = await Houses.ImportAsync(_communityId, ms, file.Name, file.Size);
+            if (!result.Succeeded || result.Data is null)
+            {
+                _importAlert = new ImportAlertState(
+                    Severity.Error,
+                    ThaiCopy.T("houses.import.result.title_fail"),
+                    ThaiCopy.T(result.ErrorKey ?? ErrorKeys.HouseImportNetwork));
+                return;
+            }
+
+            var data = result.Data;
+            if (data.FileRejected)
+            {
+                var body = FormatFileError(data.FileErrorKey);
+                _importAlert = new ImportAlertState(Severity.Error, ThaiCopy.T("houses.import.result.title_fail"), body);
+                return;
+            }
+
+            await ReloadAsync();
+            _importAlert = BuildImportAlert(data);
+        }
+        catch (IOException)
+        {
+            _importAlert = new ImportAlertState(
+                Severity.Error,
+                ThaiCopy.T("houses.import.result.title_fail"),
+                ThaiCopy.T(ErrorKeys.HouseImportTooLarge));
+        }
+        finally
+        {
+            _importing = false;
+        }
+    }
+
+    private static ImportAlertState BuildImportAlert(HouseImportResult data)
+    {
+        if (data.IsFullSuccess)
+        {
+            return new ImportAlertState(
+                Severity.Success,
+                ThaiCopy.T("houses.import.result.title_ok"),
+                ThaiCopy.Format("houses.import.result.full", ("ok", data.Ok)));
+        }
+
+        if (data.IsPartial)
+        {
+            var body = data.Fail > 0
+                ? ThaiCopy.Format("houses.import.result.partial", ("ok", data.Ok), ("skip", data.Skip), ("fail", data.Fail))
+                : ThaiCopy.Format("houses.import.result.partial_no_fail", ("ok", data.Ok), ("skip", data.Skip));
+            return new ImportAlertState(Severity.Warning, ThaiCopy.T("houses.import.result.title_partial"), body);
+        }
+
+        // none imported
+        var noneBody = data.Skip + data.Fail > 0
+            ? ThaiCopy.Format("houses.import.result.partial", ("ok", data.Ok), ("skip", data.Skip), ("fail", data.Fail))
+            : ThaiCopy.T("houses.import.result.none_imported");
+        return new ImportAlertState(Severity.Warning, ThaiCopy.T("houses.import.result.title_partial"), noneBody);
+    }
+
+    private static string FormatFileError(string? key)
+    {
+        if (key == ErrorKeys.HouseImportTooLarge)
+            return ThaiCopy.Format(key, ("maxMb", 5));
+        if (key == ErrorKeys.HouseImportTooManyRows)
+            return ThaiCopy.Format(key, ("max", HouseConstants.ExcelMaxDataRows));
+        return ThaiCopy.T(key ?? ErrorKeys.HouseImportGeneric);
+    }
+
+    private static string FormatBold(string text)
+    {
+        var parts = text.Split("**");
+        if (parts.Length == 1)
+            return System.Net.WebUtility.HtmlEncode(text);
+        var sb = new System.Text.StringBuilder();
+        for (var i = 0; i < parts.Length; i++)
+        {
+            var encoded = System.Net.WebUtility.HtmlEncode(parts[i]);
+            if (i % 2 == 1)
+                sb.Append("<strong>").Append(encoded).Append("</strong>");
+            else
+                sb.Append(encoded);
+        }
+        return sb.ToString();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        try { await BrowserViewport.UnsubscribeAsync(this); }
+        catch (JSDisconnectedException) { }
+        catch (ObjectDisposedException) { }
+    }
+
+    private sealed record ImportAlertState(Severity Severity, string Title, string Body);
+}

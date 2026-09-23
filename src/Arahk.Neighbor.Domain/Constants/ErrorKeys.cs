@@ -29,4 +29,25 @@ public static class ErrorKeys
     public const string OtpCooldown = "err.otp.cooldown";
     public const string NetworkGeneric = "error.network_generic";
     public const string ServerGeneric = "error.server_generic";
+
+    // Houses (Master Data) — keys align with UX 03-copy-th.md
+    public const string HouseNoRequired = "houses.error.house_no_required";
+    public const string HouseNoDuplicate = "houses.error.house_no_duplicate";
+    public const string HouseNoTooLong = "houses.error.house_no_too_long";
+    public const string SoiTooLong = "houses.error.soi_too_long";
+    public const string HouseNetwork = "houses.error.network";
+    public const string HouseServer = "houses.error.server";
+    public const string HouseDeleteFailed = "houses.error.delete_failed";
+    public const string HouseDeleteConflict = "houses.error.delete_conflict";
+    public const string HouseNotFound = "houses.error.not_found";
+
+    public const string HouseImportBadType = "houses.import.error.bad_type";
+    public const string HouseImportEmptyFile = "houses.import.error.empty_file";
+    public const string HouseImportNoSheet = "houses.import.error.no_sheet";
+    public const string HouseImportBadHeaders = "houses.import.error.bad_headers";
+    public const string HouseImportMissingColumns = "houses.import.error.missing_columns";
+    public const string HouseImportTooLarge = "houses.import.error.too_large";
+    public const string HouseImportTooManyRows = "houses.import.error.too_many_rows";
+    public const string HouseImportGeneric = "houses.import.error.generic";
+    public const string HouseImportNetwork = "houses.import.error.network";
 }
