@@ -196,7 +196,8 @@ html, body {
 .auth-card .mud-input > textarea.mud-input-slot,
 .auth-card .mud-input .mud-input-slot {
   font: var(--nb-font-body) !important;
-  color: var(--nb-color-text-primary) !important;  padding: 0 16px !important;
+  color: var(--nb-color-text-primary) !important;
+  /* vertical pad from Mud default; do not zero with padding: 0 … !important */
 }
 
 .auth-card .mud-input > input.mud-input-slot::placeholder {
@@ -259,8 +260,7 @@ html, body {
   font: var(--nb-font-button) !important;
   text-transform: none !important;
   box-shadow: var(--nb-shadow-button-primary) !important;
-  /* height from Size.Large; no min-height !important */
-  padding: 0 20px !important; /* Mud px-5-ish */
+  /* height from Size.Large padding (Mud ~8px 22px); no padding: 0 … !important */
 }
 
 .auth-cta.mud-button-filled:hover:not(:disabled) {
@@ -491,7 +491,7 @@ html, body {
   font-weight: var(--nb-font-weight-semibold) !important;
   text-transform: none !important;
   box-shadow: none !important;
-  padding: 0 16px !important;
+  /* pad from Mud Size/default; no padding: 0 … !important */
 }
 
 .nb-signout-btn:hover {
