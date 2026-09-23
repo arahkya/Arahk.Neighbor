@@ -1,12 +1,10 @@
 @page "/verify-email"
-@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@layout AuthLayout
 @rendermode InteractiveServer
-@using MudBlazor
 @using Arahk.Neighbor.Application.Models
 @using Arahk.Neighbor.Application.Services
 @using Arahk.Neighbor.Domain.Constants
 @using Arahk.Neighbor.Infrastructure.Email
-@using Arahk.Neighbor.Web.Services
 @inject VerifyOtpService VerifySvc
 @inject ResendOtpService ResendSvc
 @inject AuthSessionState Session
@@ -20,43 +18,48 @@
     <div class="tagline">@ThaiCopy.T("app.tagline")</div>
 </div>
 
-<MudText Typo="Typo.h5" Class="auth-title mb-2">@ThaiCopy.T("otp.title")</MudText>
-<MudText Typo="Typo.body2" Class="auth-subtitle mb-4">
-    @ThaiCopy.T("otp.subtitle") <strong>@_masked</strong>
-</MudText>
+<MudText Typo="Typo.h5" Class="auth-title">@ThaiCopy.T("otp.title")</MudText>
+<p class="auth-subtitle">@ThaiCopy.T("otp.subtitle")</p>
+<p class="auth-email-mask">@_masked</p>
 
 @if (!string.IsNullOrEmpty(_formError))
 {
-    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+    <MudAlert Severity="Severity.Error" Dense="true" Class="auth-alert">@_formError</MudAlert>
 }
 
-<MudTextField @bind-Value="_code" Label="@ThaiCopy.T("otp.field_label")"
-              Placeholder="@ThaiCopy.T("otp.placeholder")" Variant="Variant.Outlined"
-              Immediate="true" MaxLength="6" HelperText="@ThaiCopy.T("otp.helper_expiry")"
-              Error="@(!string.IsNullOrEmpty(_codeErr))" ErrorText="@_codeErr"
-              Class="mb-3 otp-input" InputMode="InputMode.numeric" />
+<OtpCodeInput @bind-Value="_code"
+              Label="@ThaiCopy.T("otp.field_label")"
+              HelperText="@ThaiCopy.T("otp.helper_expiry")"
+              ErrorText="@_codeErr"
+              Disabled="_busy" />
 
 @if (_isDev)
 {
-    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+    <MudAlert Severity="Severity.Info" Dense="true" Class="auth-alert">
         @ThaiCopy.T("dev.otp_hint"): <strong>@(EmailSink.LastOtpCode ?? "-")</strong>
     </MudAlert>
 }
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-           OnClick="VerifyAsync" Class="auth-cta mb-3" Size="Size.Large">
-    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
-    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("otp.cta"))
-</MudButton>
+<div class="auth-form-actions">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+               OnClick="VerifyAsync" Class="auth-cta" Size="Size.Large">
+        @if (_busy)
+        {
+            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
+        }
+        @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("otp.cta"))
+    </MudButton>
 
-<MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true"
-           Disabled="@(_cooldown > 0 || _resending)" OnClick="ResendAsync" Class="mb-3" Size="Size.Large">
-    @(_cooldown > 0
-        ? ThaiCopy.Format("otp.resend_in", ("seconds", _cooldown))
-        : ThaiCopy.T("otp.resend"))
-</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true"
+               Disabled="@(_cooldown > 0 || _resending)" OnClick="ResendAsync"
+               Class="auth-secondary-btn" Size="Size.Large">
+        @(_cooldown > 0
+            ? ThaiCopy.Format("otp.resend_in", ("seconds", _cooldown))
+            : ThaiCopy.T("otp.resend"))
+    </MudButton>
+</div>
 
-<div class="auth-footer">
+<div class="auth-footer muted">
     <MudLink Href="/register">@ThaiCopy.T("otp.back")</MudLink>
 </div>
 
@@ -67,7 +70,7 @@
     private bool _busy, _resending, _isDev;
     private string? _codeErr, _formError;
     private int _cooldown;
-    private System.Threading.Timer? _timer;
+    private Timer? _timer;
 
     protected override void OnInitialized()
     {
@@ -80,7 +83,7 @@
         _userId = Session.PendingOtpUserId.Value;
         _masked = Session.PendingOtpMaskedEmail ?? Session.PendingOtpEmail ?? "";
         _cooldown = 60;
-        _timer = new System.Threading.Timer(_ =>
+        _timer = new Timer(_ =>
         {
             if (_cooldown > 0)
             {
@@ -110,8 +113,14 @@
             Session.SignIn(data.UserId, data.DisplayName, data.Email);
             Nav.NavigateTo("/");
         }
-        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
-        finally { _busy = false; }
+        catch
+        {
+            _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric);
+        }
+        finally
+        {
+            _busy = false;
+        }
     }
 
     private async Task ResendAsync()
@@ -136,8 +145,14 @@
             _cooldown = result.Data?.CooldownSecondsRemaining ?? 60;
             Snackbar.Add(ThaiCopy.T("otp.toast.resent"), Severity.Success);
         }
-        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
-        finally { _resending = false; }
+        catch
+        {
+            _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric);
+        }
+        finally
+        {
+            _resending = false;
+        }
     }
 
     public void Dispose() => _timer?.Dispose();

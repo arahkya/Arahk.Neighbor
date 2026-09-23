@@ -1,11 +1,9 @@
 @page "/register"
-@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@layout AuthLayout
 @rendermode InteractiveServer
-@using MudBlazor
 @using Arahk.Neighbor.Application.Models
 @using Arahk.Neighbor.Application.Services
 @using Arahk.Neighbor.Domain.Constants
-@using Arahk.Neighbor.Web.Services
 @inject RegisterUserService RegisterSvc
 @inject AuthSessionState Session
 @inject NavigationManager Nav
@@ -16,46 +14,66 @@
     <div class="tagline">@ThaiCopy.T("app.tagline")</div>
 </div>
 
-<MudText Typo="Typo.h5" Class="auth-title mb-4">@ThaiCopy.T("register.title")</MudText>
+<MudText Typo="Typo.h5" Class="auth-title">@ThaiCopy.T("register.title")</MudText>
 
 @if (!string.IsNullOrEmpty(_formError))
 {
-    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+    <MudAlert Severity="Severity.Error" Dense="true" Class="auth-alert">@_formError</MudAlert>
 }
 
-<MudTextField @bind-Value="_displayName" Label="@ThaiCopy.T("register.displayname.label")"
-              Placeholder="@ThaiCopy.T("register.displayname.placeholder")"
-              HelperText="@ThaiCopy.T("register.displayname.helper")" Variant="Variant.Outlined"
-              Immediate="true" Error="@E(_dnErr)" ErrorText="@_dnErr" Class="mb-3" />
+<div class="auth-field">
+    <label class="field-label" for="reg-displayname">@ThaiCopy.T("register.displayname.label")</label>
+    <MudTextField @bind-Value="_displayName" id="reg-displayname"
+                  Placeholder="@ThaiCopy.T("register.displayname.placeholder")"
+                  HelperText="@ThaiCopy.T("register.displayname.helper")" Variant="Variant.Outlined"
+                  Immediate="true" Error="@E(_dnErr)" ErrorText="@_dnErr"
+                  Margin="Margin.None" />
+</div>
 
-<MudTextField @bind-Value="_email" Label="@ThaiCopy.T("register.email.label")"
-              Placeholder="@ThaiCopy.T("register.email.placeholder")"
-              HelperText="@ThaiCopy.T("register.email.helper")" Variant="Variant.Outlined"
-              Immediate="true" InputType="InputType.Email" Error="@E(_emailErr)" ErrorText="@_emailErr" Class="mb-3" />
+<div class="auth-field">
+    <label class="field-label" for="reg-email">@ThaiCopy.T("register.email.label")</label>
+    <MudTextField @bind-Value="_email" id="reg-email"
+                  Placeholder="@ThaiCopy.T("register.email.placeholder")"
+                  HelperText="@ThaiCopy.T("register.email.helper")" Variant="Variant.Outlined"
+                  Immediate="true" InputType="InputType.Email" Error="@E(_emailErr)" ErrorText="@_emailErr"
+                  Margin="Margin.None" />
+</div>
 
-<MudTextField @bind-Value="_phone" Label="@ThaiCopy.T("register.phone.label")"
-              Placeholder="@ThaiCopy.T("register.phone.placeholder")"
-              HelperText="@ThaiCopy.T("register.phone.helper")" Variant="Variant.Outlined"
-              Immediate="true" Error="@E(_phoneErr)" ErrorText="@_phoneErr" Class="mb-3" />
+<div class="auth-field">
+    <label class="field-label" for="reg-phone">@ThaiCopy.T("register.phone.label")</label>
+    <MudTextField @bind-Value="_phone" id="reg-phone"
+                  Placeholder="@ThaiCopy.T("register.phone.placeholder")"
+                  HelperText="@ThaiCopy.T("register.phone.helper")" Variant="Variant.Outlined"
+                  Immediate="true" Error="@E(_phoneErr)" ErrorText="@_phoneErr"
+                  Margin="Margin.None" />
+</div>
 
-<MudTextField @bind-Value="_password" Label="@ThaiCopy.T("register.password.label")"
-              Placeholder="@ThaiCopy.T("register.password.placeholder")"
-              HelperText="@ThaiCopy.T("register.password.helper")" Variant="Variant.Outlined"
-              Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
-              Adornment="Adornment.End"
-              AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
-              OnAdornmentClick="@(() => _showPw = !_showPw)"
-              Error="@E(_pwErr)" ErrorText="@_pwErr" Class="mb-3" />
+<div class="auth-field">
+    <label class="field-label" for="reg-password">@ThaiCopy.T("register.password.label")</label>
+    <MudTextField @bind-Value="_password" id="reg-password"
+                  Placeholder="@ThaiCopy.T("register.password.placeholder")"
+                  HelperText="@ThaiCopy.T("register.password.helper")" Variant="Variant.Outlined"
+                  Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                  OnAdornmentClick="@(() => _showPw = !_showPw)"
+                  Error="@E(_pwErr)" ErrorText="@_pwErr"
+                  Margin="Margin.None" />
+</div>
 
-<MudTextField @bind-Value="_passwordConfirm" Label="@ThaiCopy.T("register.password_confirm.label")"
-              Placeholder="@ThaiCopy.T("register.password_confirm.placeholder")" Variant="Variant.Outlined"
-              Immediate="true" InputType="@(_showPw2 ? InputType.Text : InputType.Password)"
-              Adornment="Adornment.End"
-              AdornmentIcon="@(_showPw2 ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
-              OnAdornmentClick="@(() => _showPw2 = !_showPw2)"
-              Error="@E(_pw2Err)" ErrorText="@_pw2Err" Class="mb-3" />
+<div class="auth-field">
+    <label class="field-label" for="reg-password2">@ThaiCopy.T("register.password_confirm.label")</label>
+    <MudTextField @bind-Value="_passwordConfirm" id="reg-password2"
+                  Placeholder="@ThaiCopy.T("register.password_confirm.placeholder")" Variant="Variant.Outlined"
+                  Immediate="true" InputType="@(_showPw2 ? InputType.Text : InputType.Password)"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@(_showPw2 ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                  OnAdornmentClick="@(() => _showPw2 = !_showPw2)"
+                  Error="@E(_pw2Err)" ErrorText="@_pw2Err"
+                  Margin="Margin.None" />
+</div>
 
-<div class="terms-row mb-3">
+<div class="terms-row">
     <MudCheckBox @bind-Value="_terms" Color="Color.Primary" Dense="true" />
     <span class="terms-text">
         @ThaiCopy.T("register.terms.prefix")
@@ -66,14 +84,19 @@
 </div>
 @if (!string.IsNullOrEmpty(_termsErr))
 {
-    <MudText Typo="Typo.caption" Class="mud-error-text mb-2">@_termsErr</MudText>
+    <div class="terms-error">@_termsErr</div>
 }
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-           OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
-    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
-    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("register.cta"))
-</MudButton>
+<div class="auth-form-actions">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+               OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
+        @if (_busy)
+        {
+            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
+        }
+        @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("register.cta"))
+    </MudButton>
+</div>
 
 <div class="auth-footer">
     <MudLink Href="/login">@ThaiCopy.T("register.link.login")</MudLink>
@@ -117,7 +140,13 @@
             Session.SetPendingOtp(result.Data!.UserId, result.Data.Email, result.Data.MaskedEmail);
             Nav.NavigateTo("/verify-email");
         }
-        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
-        finally { _busy = false; }
+        catch
+        {
+            _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric);
+        }
+        finally
+        {
+            _busy = false;
+        }
     }
 }

@@ -1,11 +1,9 @@
 @page "/login"
-@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@layout AuthLayout
 @rendermode InteractiveServer
-@using MudBlazor
 @using Arahk.Neighbor.Application.Models
 @using Arahk.Neighbor.Application.Services
 @using Arahk.Neighbor.Domain.Constants
-@using Arahk.Neighbor.Web.Services
 @inject LoginService LoginSvc
 @inject AuthSessionState Session
 @inject NavigationManager Nav
@@ -16,9 +14,9 @@
     <div class="tagline">@ThaiCopy.T("app.tagline")</div>
 </div>
 
-<MudText Typo="Typo.h5" Class="auth-title mb-4">@ThaiCopy.T("login.title")</MudText>
+<MudText Typo="Typo.h5" Class="auth-title">@ThaiCopy.T("login.title")</MudText>
 
-<div class="mode-toggle mb-4">
+<div class="mode-toggle">
     <MudButton Variant="@(_mode == LoginMode.Email ? Variant.Filled : Variant.Text)"
                Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Email))" Class="mode-btn">
         @ThaiCopy.T("login.mode.email")
@@ -31,41 +29,57 @@
 
 @if (!string.IsNullOrEmpty(_formError))
 {
-    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+    <MudAlert Severity="Severity.Error" Dense="true" Class="auth-alert">@_formError</MudAlert>
 }
 
 @if (_mode == LoginMode.Email)
 {
-    <MudTextField @bind-Value="_email" Label="@ThaiCopy.T("login.email.label")"
-                  Placeholder="@ThaiCopy.T("login.email.placeholder")" Variant="Variant.Outlined"
-                  Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr" Class="mb-3"
-                  InputType="InputType.Email" />
+    <div class="auth-field">
+        <label class="field-label" for="login-email">@ThaiCopy.T("login.email.label")</label>
+        <MudTextField @bind-Value="_email" id="login-email"
+                      Placeholder="@ThaiCopy.T("login.email.placeholder")" Variant="Variant.Outlined"
+                      Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr"
+                      InputType="InputType.Email" Margin="Margin.None" />
+    </div>
 }
 else
 {
-    <MudTextField @bind-Value="_phone" Label="@ThaiCopy.T("login.phone.label")"
-                  Placeholder="@ThaiCopy.T("login.phone.placeholder")"
-                  HelperText="@ThaiCopy.T("login.phone.helper")" Variant="Variant.Outlined"
-                  Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr" Class="mb-3" />
+    <div class="auth-field">
+        <label class="field-label" for="login-phone">@ThaiCopy.T("login.phone.label")</label>
+        <MudTextField @bind-Value="_phone" id="login-phone"
+                      Placeholder="@ThaiCopy.T("login.phone.placeholder")"
+                      HelperText="@ThaiCopy.T("login.phone.helper")" Variant="Variant.Outlined"
+                      Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr"
+                      Margin="Margin.None" />
+    </div>
 }
 
-<MudTextField @bind-Value="_password" Label="@ThaiCopy.T("login.password.label")"
-              Placeholder="@ThaiCopy.T("login.password.placeholder")" Variant="Variant.Outlined"
-              Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
-              Adornment="Adornment.End"
-              AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
-              OnAdornmentClick="@(() => _showPw = !_showPw)"
-              Error="@HasErr(ref _pwErr)" ErrorText="@_pwErr" Class="mb-1" />
+<div class="auth-field">
+    <label class="field-label" for="login-password">@ThaiCopy.T("login.password.label")</label>
+    <MudTextField @bind-Value="_password" id="login-password"
+                  Placeholder="@ThaiCopy.T("login.password.placeholder")" Variant="Variant.Outlined"
+                  Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+                  OnAdornmentClick="@(() => _showPw = !_showPw)"
+                  Error="@HasErr(ref _pwErr)" ErrorText="@_pwErr"
+                  Margin="Margin.None" />
+</div>
 
 <div class="forgot-row">
     <MudLink Typo="Typo.body2" Class="forgot-link" OnClick="OnForgot">@ThaiCopy.T("login.link.forgot")</MudLink>
 </div>
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
-           OnClick="SubmitAsync" Class="auth-cta mt-2" Size="Size.Large">
-    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
-    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("login.cta"))
-</MudButton>
+<div class="auth-form-actions">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+               OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
+        @if (_busy)
+        {
+            <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" />
+        }
+        @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("login.cta"))
+    </MudButton>
+</div>
 
 <div class="auth-footer">
     <MudLink Href="/register">@ThaiCopy.T("login.link.register")</MudLink>
@@ -84,7 +98,13 @@ else
         if (Session.IsAuthenticated) Nav.NavigateTo("/");
     }
 
-    private void SwitchMode(LoginMode mode) { _mode = mode; _idErr = null; _formError = null; }
+    private void SwitchMode(LoginMode mode)
+    {
+        _mode = mode;
+        _idErr = null;
+        _formError = null;
+    }
+
     private void OnForgot() => Snackbar.Add(ThaiCopy.T("login.forgot.soon"), Severity.Info);
 
     private async Task SubmitAsync()
@@ -112,8 +132,14 @@ else
             Session.SignIn(data.UserId, data.DisplayName, data.Email);
             Nav.NavigateTo("/");
         }
-        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
-        finally { _busy = false; }
+        catch
+        {
+            _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric);
+        }
+        finally
+        {
+            _busy = false;
+        }
     }
 
     private static string Mask(string email)

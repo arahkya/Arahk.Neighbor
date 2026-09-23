@@ -1,0 +1,137 @@
+@* 6-cell OTP input aligned with neighbor-auth-ui (48×48, gap 8, digit 20/600) *@
+
+<div class="otp-field">
+    @if (!string.IsNullOrEmpty(Label))
+    {
+        <label class="field-label">@Label</label>
+    }
+    <div class="otp-row" role="group" aria-label="@Label">
+        @for (var i = 0; i < Length; i++)
+        {
+            var index = i;
+            <input class="@CellClass(index)"
+                   type="text"
+                   inputmode="numeric"
+                   autocomplete="@(index == 0 ? "one-time-code" : "off")"
+                   maxlength="6"
+                   aria-label="@($"หลักที่ {index + 1}")"
+                   value="@GetDigit(index)"
+                   disabled="@Disabled"
+                   @oninput="e => OnDigitInput(index, e)"
+                   @onkeydown="e => OnKeyDown(index, e)"
+                   @ref="_inputs[index]" />
+        }
+    </div>
+    @if (!string.IsNullOrEmpty(ErrorText))
+    {
+        <div class="otp-error">@ErrorText</div>
+    }
+    else if (!string.IsNullOrEmpty(HelperText))
+    {
+        <div class="otp-helper">@HelperText</div>
+    }
+</div>
+
+@code {
+    private const int Length = 6;
+    private readonly ElementReference[] _inputs = new ElementReference[Length];
+    private readonly string[] _digits = Enumerable.Repeat("", Length).ToArray();
+
+    [Parameter] public string Value { get; set; } = "";
+    [Parameter] public EventCallback<string> ValueChanged { get; set; }
+    [Parameter] public string? Label { get; set; }
+    [Parameter] public string? HelperText { get; set; }
+    [Parameter] public string? ErrorText { get; set; }
+    [Parameter] public bool Disabled { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var normalized = new string((Value ?? "").Where(char.IsDigit).Take(Length).ToArray());
+        for (var i = 0; i < Length; i++)
+            _digits[i] = i < normalized.Length ? normalized[i].ToString() : "";
+    }
+
+    private string GetDigit(int index) => _digits[index];
+
+    private string CellClass(int index)
+    {
+        var cls = "otp-cell";
+        if (!string.IsNullOrEmpty(ErrorText)) cls += " is-error";
+        else if (!string.IsNullOrEmpty(_digits[index])) cls += " is-filled";
+        return cls;
+    }
+
+    private async Task OnDigitInput(int index, ChangeEventArgs e)
+    {
+        var raw = e.Value?.ToString() ?? "";
+        var digitsOnly = new string(raw.Where(char.IsDigit).ToArray());
+
+        if (digitsOnly.Length == 0)
+        {
+            _digits[index] = "";
+            await EmitValueAsync();
+            return;
+        }
+
+        if (digitsOnly.Length > 1)
+        {
+            await ApplySequence(digitsOnly, index);
+            return;
+        }
+
+        _digits[index] = digitsOnly;
+        await EmitValueAsync();
+
+        if (index < Length - 1)
+            await _inputs[index + 1].FocusAsync();
+    }
+
+    private async Task OnKeyDown(int index, KeyboardEventArgs e)
+    {
+        if (e.Key == "Backspace")
+        {
+            if (!string.IsNullOrEmpty(_digits[index]))
+            {
+                _digits[index] = "";
+                await EmitValueAsync();
+            }
+            else if (index > 0)
+            {
+                _digits[index - 1] = "";
+                await EmitValueAsync();
+                await _inputs[index - 1].FocusAsync();
+            }
+        }
+        else if (e.Key == "ArrowLeft" && index > 0)
+        {
+            await _inputs[index - 1].FocusAsync();
+        }
+        else if (e.Key == "ArrowRight" && index < Length - 1)
+        {
+            await _inputs[index + 1].FocusAsync();
+        }
+    }
+
+    private async Task ApplySequence(string digits, int startIndex)
+    {
+        var i = startIndex;
+        foreach (var ch in digits)
+        {
+            if (i >= Length) break;
+            _digits[i++] = ch.ToString();
+        }
+        for (; i < Length; i++)
+            _digits[i] = "";
+
+        await EmitValueAsync();
+        var focus = Math.Min(startIndex + digits.Length, Length - 1);
+        await _inputs[focus].FocusAsync();
+    }
+
+    private async Task EmitValueAsync()
+    {
+        var code = string.Concat(_digits);
+        if (code != Value)
+            await ValueChanged.InvokeAsync(code);
+    }
+}
