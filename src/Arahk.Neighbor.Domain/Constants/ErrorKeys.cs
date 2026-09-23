@@ -13,6 +13,9 @@ public static class ErrorKeys
     public const string PasswordComplexity = "err.password.complexity";
     public const string PasswordConfirmRequired = "err.password_confirm.required";
     public const string PasswordConfirmMismatch = "err.password_confirm.mismatch";
+    public const string PasswordCurrentRequired = "err.password.current_required";
+    public const string PasswordCurrentInvalid = "err.password.current_invalid";
+    public const string PasswordNewRequired = "err.password.new_required";
     public const string DisplayNameRequired = "err.displayname.required";
     public const string DisplayNameMin = "err.displayname.min";
     public const string DisplayNameMax = "err.displayname.max";

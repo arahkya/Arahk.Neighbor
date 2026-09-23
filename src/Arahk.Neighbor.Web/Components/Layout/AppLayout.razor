@@ -1,11 +1,15 @@
 @inherits LayoutComponentBase
 @implements IBrowserViewportObserver
 @implements IAsyncDisposable
+@using Arahk.Neighbor.Domain.Services
+@using Arahk.Neighbor.Web.Components.Profile
 @using Arahk.Neighbor.Web.Theme
 @using MudBlazor.Services
 @inject AuthSessionState Session
 @inject AppShellState Shell
+@inject ProfileService Profiles
 @inject NavigationManager Nav
+@inject IDialogService DialogService
 @inject IBrowserViewportService BrowserViewport
 
 <MudThemeProvider Theme="_theme" />
@@ -26,13 +30,37 @@
         }
         <MudText Typo="Typo.h6" Class="nb-appbar-wordmark">@ThaiCopy.T("app.wordmark")</MudText>
         <MudSpacer />
-        @if (!_isBelowMd && Session.IsAuthenticated)
+        @if (Session.IsAuthenticated)
         {
-            <MudButton Variant="Variant.Outlined"
-                       Class="nb-signout-btn"
-                       OnClick="SignOut">
-                @ThaiCopy.T("layout.sign_out")
-            </MudButton>
+            <MudMenu AnchorOrigin="Origin.BottomRight"
+                     TransformOrigin="Origin.TopRight"
+                     Class="nb-account-menu"
+                     Dense="true">
+                <ActivatorContent>
+                    <MudAvatar Class="nb-appbar-avatar"
+                               Color="Color.Primary"
+                               Size="Size.Medium"
+                               aria-label="@ThaiCopy.Format("profile.menu.aria", ("displayName", Session.DisplayName ?? ""))">
+                        @AvatarInitials
+                    </MudAvatar>
+                </ActivatorContent>
+                <ChildContent>
+                    <MudMenuItem Icon="@Icons.Material.Filled.Person"
+                                 OnClick="OpenProfileAsync">
+                        @ThaiCopy.T("profile.menu.my_profile")
+                    </MudMenuItem>
+                    <MudMenuItem Icon="@Icons.Material.Filled.VpnKey"
+                                 OnClick="OpenChangePasswordAsync">
+                        @ThaiCopy.T("profile.menu.change_password")
+                    </MudMenuItem>
+                    <MudDivider Class="nb-account-menu-divider" />
+                    <MudMenuItem Icon="@Icons.Material.Filled.Logout"
+                                 Class="nb-account-menu-signout"
+                                 OnClick="SignOut">
+                        @ThaiCopy.T("profile.menu.sign_out")
+                    </MudMenuItem>
+                </ChildContent>
+            </MudMenu>
         }
     </MudAppBar>
 
@@ -54,6 +82,10 @@
                     <MudText Class="nb-drawer-tagline">@ThaiCopy.T("app.tagline")</MudText>
                 </div>
             </MudDrawerHeader>
+        }
+        else
+        {
+            <div class="nb-drawer-section">@ThaiCopy.T("nav.section")</div>
         }
 
         <MudNavMenu Class="nb-nav-menu" aria-label="@ThaiCopy.T("a11y.main_nav")">
@@ -82,18 +114,6 @@
                 @ThaiCopy.T("nav.master_data")
             </MudNavLink>
         </MudNavMenu>
-
-        @if (_isBelowMd && Session.IsAuthenticated)
-        {
-            <div class="nb-drawer-footer">
-                <MudButton Variant="Variant.Outlined"
-                           FullWidth="true"
-                           Class="nb-signout-btn"
-                           OnClick="SignOut">
-                    @ThaiCopy.T("layout.sign_out")
-                </MudButton>
-            </div>
-        }
     </MudDrawer>
 
     <MudMainContent Class="nb-main">
@@ -133,6 +153,9 @@
 
     private DrawerClipMode DrawerClip =>
         _isBelowMd ? DrawerClipMode.Never : DrawerClipMode.Docked;
+
+    private string AvatarInitials =>
+        DisplayNameInitials.FromDisplayName(Session.DisplayName);
 
     Guid IBrowserViewportObserver.Id => _observerId;
 
@@ -195,6 +218,60 @@
     {
         if (_isBelowMd)
             _drawerOpen = false;
+    }
+
+    private async Task OpenProfileAsync()
+    {
+        if (_isBelowMd)
+        {
+            Nav.NavigateTo("/profile");
+            return;
+        }
+
+        var (name, email, phone) = await LoadProfileFieldsAsync();
+        var parameters = new DialogParameters<ProfileEditDialog>
+        {
+            { x => x.InitialDisplayName, name },
+            { x => x.InitialEmail, email },
+            { x => x.InitialPhone, phone }
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+        var dialog = await DialogService.ShowAsync<ProfileEditDialog>(ThaiCopy.T("profile.title"), parameters, options);
+        var result = await dialog.Result;
+        if (result is not null && !result.Canceled && result.Data is string action && action == "change-password")
+            await OpenChangePasswordAsync();
+    }
+
+    private async Task OpenChangePasswordAsync()
+    {
+        if (_isBelowMd)
+        {
+            Nav.NavigateTo("/profile/password");
+            return;
+        }
+
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+        await DialogService.ShowAsync<ChangePasswordDialog>(ThaiCopy.T("password_change.title"), options);
+    }
+
+    private async Task<(string Name, string Email, string? Phone)> LoadProfileFieldsAsync()
+    {
+        var name = Session.DisplayName ?? string.Empty;
+        var email = Session.Email ?? string.Empty;
+        string? phone = null;
+
+        if (Session.UserId is not null)
+        {
+            var result = await Profiles.GetAsync(Session.UserId.Value);
+            if (result.Succeeded && result.Data is not null)
+            {
+                name = result.Data.DisplayName;
+                email = result.Data.Email;
+                phone = result.Data.PhoneLocal;
+            }
+        }
+
+        return (name, email, phone);
     }
 
     private void SignOut()

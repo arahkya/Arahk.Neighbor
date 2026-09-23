@@ -56,4 +56,19 @@ public class User
         CreatedAt = now;
         EmailVerified = false;
     }
+
+    /// <summary>Updates display name and optional phone (null clears phone).</summary>
+    public void UpdateProfile(string displayName, PhoneNumber? phone)
+    {
+        DisplayName = displayName.Trim();
+        PhoneE164 = phone?.E164;
+        PhoneLocal = phone?.LocalForm;
+    }
+
+    public void SetPasswordHash(string passwordHash)
+    {
+        if (string.IsNullOrEmpty(passwordHash))
+            throw new ArgumentException("Password hash is required.", nameof(passwordHash));
+        PasswordHash = passwordHash;
+    }
 }

@@ -1358,3 +1358,146 @@ html, body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ——— My Profile (phase A) ——— */
+.nb-appbar-avatar {
+  cursor: pointer;
+  width: 36px !important;
+  height: 36px !important;
+  font: var(--nb-font-label) !important;
+  font-weight: var(--nb-font-weight-semibold) !important;
+  background: var(--nb-color-primary-muted) !important;
+  color: var(--nb-color-primary) !important;
+  border: var(--nb-border-width-hairline) solid var(--nb-color-primary) !important;
+}
+
+.nb-account-menu .mud-menu-list {
+  min-width: 200px;
+}
+
+.nb-account-menu-divider {
+  margin: var(--nb-space-1) 0 !important;
+}
+
+.nb-account-menu-signout {
+  color: var(--nb-color-error) !important;
+}
+
+.nb-account-menu-signout .mud-icon-root {
+  color: var(--nb-color-error) !important;
+}
+
+.nb-drawer-section {
+  font: var(--nb-font-helper);
+  color: var(--nb-color-text-muted);
+  padding: var(--nb-space-2) var(--nb-space-nav-item-x);
+  margin-bottom: var(--nb-space-1);
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.nb-profile-dialog .mud-dialog-content {
+  max-width: 440px;
+}
+
+.nb-profile-avatar-card {
+  display: flex;
+  align-items: center;
+  gap: var(--nb-space-3);
+  padding: var(--nb-space-3);
+  margin-bottom: var(--nb-space-4);
+  border: var(--nb-border-width-hairline) solid var(--nb-color-border);
+  border-radius: var(--nb-radius-card);
+  background: var(--nb-color-surface-subtle);
+}
+
+.nb-profile-avatar {
+  background: var(--nb-color-primary-muted) !important;
+  color: var(--nb-color-primary) !important;
+  flex-shrink: 0;
+}
+
+.nb-profile-avatar-caption {
+  font: var(--nb-font-label) !important;
+  font-weight: var(--nb-font-weight-semibold) !important;
+  color: var(--nb-color-text-primary) !important;
+}
+
+.nb-profile-avatar-hint {
+  font: var(--nb-font-helper) !important;
+  color: var(--nb-color-text-muted) !important;
+}
+
+.nb-profile-email-label-row {
+  display: flex;
+  align-items: center;
+  gap: var(--nb-space-2);
+  margin-bottom: var(--nb-space-1);
+}
+
+.nb-profile-email-label {
+  font: var(--nb-font-label);
+  color: var(--nb-color-text-secondary);
+}
+
+.nb-profile-email-badge {
+  height: 22px !important;
+  background: var(--nb-color-surface-subtle) !important;
+  color: var(--nb-color-text-muted) !important;
+  font: var(--nb-font-helper) !important;
+}
+
+.nb-profile-email-field .mud-input-control {
+  opacity: 0.85;
+}
+
+.nb-profile-pwd-link {
+  text-transform: none !important;
+  margin: var(--nb-space-2) 0 var(--nb-space-1) !important;
+  padding-left: 0 !important;
+}
+
+.nb-profile-cancel {
+  text-transform: none !important;
+  border-color: var(--nb-color-border) !important;
+  color: var(--nb-color-text-primary) !important;
+}
+
+.nb-profile-save {
+  text-transform: none !important;
+  font-weight: var(--nb-font-weight-semibold) !important;
+}
+
+.nb-profile-page {
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.nb-profile-page-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--nb-space-2);
+  margin-bottom: var(--nb-space-3);
+}
+
+.nb-profile-page-title {
+  font-weight: var(--nb-font-weight-semibold) !important;
+}
+
+.nb-profile-back {
+  color: var(--nb-color-text-secondary) !important;
+}
+
+.nb-profile-page-card {
+  padding: var(--nb-space-4) !important;
+  border: var(--nb-border-width-hairline) solid var(--nb-color-border) !important;
+  border-radius: var(--nb-radius-card) !important;
+  background: var(--nb-color-surface) !important;
+}
+
+.nb-profile-page-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--nb-space-2);
+  margin-top: var(--nb-space-4);
+}

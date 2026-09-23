@@ -1,0 +1,84 @@
+@inject ProfileService Profiles
+@inject AuthSessionState Session
+@inject ISnackbar Snackbar
+
+<MudDialog Class="nb-profile-dialog">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@ThaiCopy.T("profile.title")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <p class="nb-dialog-subtitle">@ThaiCopy.T("profile.subtitle")</p>
+        <ProfileEditForm @ref="_form"
+                         InitialDisplayName="@InitialDisplayName"
+                         InitialEmail="@InitialEmail"
+                         InitialPhone="@InitialPhone"
+                         OnRequestChangePassword="OnChangePasswordLink" />
+        @if (!string.IsNullOrEmpty(_formError))
+        {
+            <MudAlert Severity="Severity.Error" Dense="true" Class="nb-dialog-alert">@_formError</MudAlert>
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" Disabled="_busy" OnClick="Cancel" Class="nb-profile-cancel">
+            @ThaiCopy.T("profile.action.cancel")
+        </MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_busy" OnClick="SaveAsync" Class="nb-profile-save">
+            @ThaiCopy.T("profile.action.save")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public string InitialDisplayName { get; set; } = string.Empty;
+    [Parameter] public string InitialEmail { get; set; } = string.Empty;
+    [Parameter] public string? InitialPhone { get; set; }
+
+    private ProfileEditForm _form = default!;
+    private string? _formError;
+    private bool _busy;
+
+    private void Cancel() => MudDialog.Cancel();
+
+    private void OnChangePasswordLink()
+    {
+        MudDialog.Close(DialogResult.Ok("change-password"));
+    }
+
+    private async Task SaveAsync()
+    {
+        if (Session.UserId is null)
+            return;
+
+        _formError = null;
+        if (!_form.ValidateClient())
+            return;
+
+        _busy = true;
+        try
+        {
+            var result = await Profiles.UpdateAsync(
+                Session.UserId.Value,
+                new UpdateProfileRequest(_form.DisplayName, _form.Phone));
+
+            if (result.Succeeded && result.Data is not null)
+            {
+                Session.UpdateDisplayName(result.Data.DisplayName);
+                Snackbar.Add(ThaiCopy.T("profile.toast.saved"), Severity.Success);
+                MudDialog.Close(DialogResult.Ok("saved"));
+                return;
+            }
+
+            _form.ApplyServerErrors(result.FieldErrors);
+            if (!string.IsNullOrEmpty(result.ErrorKey))
+                _formError = ThaiCopy.T(result.ErrorKey);
+            if (string.IsNullOrEmpty(_formError) && result.FieldErrors.Count == 0)
+                _formError = ThaiCopy.T(ErrorKeys.ServerGeneric);
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

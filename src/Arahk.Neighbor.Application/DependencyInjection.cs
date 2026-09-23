@@ -13,6 +13,7 @@ public static class DependencyInjection
         services.AddScoped<ResendOtpService>();
         services.AddScoped<HouseService>();
         services.AddScoped<RolePermissionService>();
+        services.AddScoped<ProfileService>();
         return services;
     }
 }

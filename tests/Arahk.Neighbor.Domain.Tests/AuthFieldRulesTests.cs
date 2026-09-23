@@ -59,4 +59,15 @@ public class AuthFieldRulesTests
         AuthFieldRules.ValidatePhone("0812345678", required: false).Should().BeNull();
         AuthFieldRules.ValidatePhone("bad", required: false).Should().Be(ErrorKeys.PhoneFormat);
     }
+
+    [Fact]
+    public void CurrentAndNewPassword_Rules()
+    {
+        AuthFieldRules.ValidateCurrentPassword("").Should().Be(ErrorKeys.PasswordCurrentRequired);
+        AuthFieldRules.ValidateCurrentPassword("x").Should().BeNull();
+        AuthFieldRules.ValidateNewPassword("").Should().Be(ErrorKeys.PasswordNewRequired);
+        AuthFieldRules.ValidateNewPassword("short1").Should().Be(ErrorKeys.PasswordMin);
+        AuthFieldRules.ValidateNewPassword("onlyletters").Should().Be(ErrorKeys.PasswordComplexity);
+        AuthFieldRules.ValidateNewPassword("Pass1234").Should().BeNull();
+    }
 }

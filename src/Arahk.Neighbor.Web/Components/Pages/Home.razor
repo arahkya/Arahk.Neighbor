@@ -12,7 +12,7 @@ else
 {
     <section class="nb-welcome" aria-labelledby="welcome-title">
         <MudText Typo="Typo.h5" Class="nb-welcome-title" id="welcome-title">
-            @ThaiCopy.T("home.welcome.headline")
+            @ThaiCopy.Format("home.welcome.headline_named", ("displayName", Session.DisplayName ?? ""))
         </MudText>
         <MudText Class="nb-welcome-body">
             @ThaiCopy.T("home.welcome.body")

@@ -1,0 +1,106 @@
+@using Arahk.Neighbor.Domain.Services
+
+<div class="nb-profile-avatar-card">
+    <MudAvatar Class="nb-profile-avatar" Color="Color.Primary" Size="Size.Large">@_previewInitials</MudAvatar>
+    <div class="nb-profile-avatar-meta">
+        <MudText Class="nb-profile-avatar-caption">@ThaiCopy.T("profile.avatar.caption")</MudText>
+        <MudText Class="nb-profile-avatar-hint">
+            @(CompactHints ? ThaiCopy.T("profile.avatar.hint_mobile") : ThaiCopy.T("profile.avatar.hint"))
+        </MudText>
+    </div>
+</div>
+
+<MudForm @ref="_mudForm">
+    <MudTextField @bind-Value="DisplayName"
+                  @bind-Value:after="OnDisplayNameAfter"
+                  Label="@ThaiCopy.T("profile.field.displayname")"
+                  HelperText="@ThaiCopy.T("profile.field.displayname.helper")"
+                  Required="true"
+                  RequiredError="@ThaiCopy.T(ErrorKeys.DisplayNameRequired)"
+                  MaxLength="50"
+                  Immediate="true"
+                  Error="@(!string.IsNullOrEmpty(DisplayNameError))"
+                  ErrorText="@DisplayNameError"
+                  Class="nb-dialog-field"
+                  Variant="Variant.Outlined" />
+
+    <div class="nb-profile-email-label-row">
+        <span class="nb-profile-email-label">@ThaiCopy.T("profile.field.email")</span>
+        <MudChip T="string" Size="Size.Small" Class="nb-profile-email-badge">@ThaiCopy.T("profile.field.email.badge")</MudChip>
+    </div>
+    <MudTextField @bind-Value="Email"
+                  ReadOnly="true"
+                  Disabled="true"
+                  HelperText="@ThaiCopy.T("profile.field.email.helper")"
+                  Class="nb-dialog-field nb-profile-email-field"
+                  Variant="Variant.Outlined" />
+
+    <MudTextField @bind-Value="Phone"
+                  Label="@($"{ThaiCopy.T("profile.field.phone")} {ThaiCopy.T("profile.field.phone.optional")}")"
+                  HelperText="@(CompactHints ? ThaiCopy.T("profile.field.phone.helper_mobile") : ThaiCopy.T("profile.field.phone.helper"))"
+                  Immediate="true"
+                  Error="@(!string.IsNullOrEmpty(PhoneError))"
+                  ErrorText="@PhoneError"
+                  Class="nb-dialog-field"
+                  Variant="Variant.Outlined" />
+</MudForm>
+
+<MudButton Variant="Variant.Text"
+           Color="Color.Primary"
+           StartIcon="@Icons.Material.Filled.VpnKey"
+           Class="nb-profile-pwd-link"
+           OnClick="RequestChangePassword">
+    @ThaiCopy.T("profile.link.change_password")
+</MudButton>
+
+@code {
+    [Parameter] public string InitialDisplayName { get; set; } = string.Empty;
+    [Parameter] public string InitialEmail { get; set; } = string.Empty;
+    [Parameter] public string? InitialPhone { get; set; }
+    [Parameter] public bool CompactHints { get; set; }
+    [Parameter] public EventCallback OnRequestChangePassword { get; set; }
+
+    private MudForm? _mudForm;
+    private string _previewInitials = "?";
+
+    public string DisplayName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string? Phone { get; set; }
+    public string? DisplayNameError { get; private set; }
+    public string? PhoneError { get; private set; }
+
+    protected override void OnInitialized()
+    {
+        DisplayName = InitialDisplayName;
+        Email = InitialEmail;
+        Phone = InitialPhone;
+        _previewInitials = DisplayNameInitials.FromDisplayName(DisplayName);
+    }
+
+    private void OnDisplayNameAfter()
+    {
+        DisplayNameError = null;
+        _previewInitials = DisplayNameInitials.FromDisplayName(DisplayName);
+    }
+
+    private Task RequestChangePassword() => OnRequestChangePassword.InvokeAsync();
+
+    public bool ValidateClient()
+    {
+        DisplayNameError = AuthFieldRules.ValidateDisplayName(DisplayName) is { } dk
+            ? ThaiCopy.T(dk)
+            : null;
+        PhoneError = AuthFieldRules.ValidatePhone(Phone, required: false) is { } pk
+            ? ThaiCopy.T(pk)
+            : null;
+        return DisplayNameError is null && PhoneError is null;
+    }
+
+    public void ApplyServerErrors(IReadOnlyDictionary<string, string> fieldErrors)
+    {
+        if (fieldErrors.TryGetValue("displayName", out var nameErr))
+            DisplayNameError = ThaiCopy.T(nameErr);
+        if (fieldErrors.TryGetValue("phone", out var phoneErr))
+            PhoneError = ThaiCopy.T(phoneErr);
+    }
+}

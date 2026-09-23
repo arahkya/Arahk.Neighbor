@@ -67,6 +67,25 @@ public static class AuthFieldRules
         return null;
     }
 
+
+    public static string? ValidateCurrentPassword(string? password)
+    {
+        return string.IsNullOrEmpty(password) ? ErrorKeys.PasswordCurrentRequired : null;
+    }
+
+    public static string? ValidateNewPassword(string? password)
+    {
+        if (string.IsNullOrEmpty(password))
+            return ErrorKeys.PasswordNewRequired;
+        if (password.Length < AuthConstants.PasswordMinLength)
+            return ErrorKeys.PasswordMin;
+        if (password.Length > AuthConstants.PasswordMaxLength)
+            return ErrorKeys.PasswordMin;
+        if (!LetterRegex.IsMatch(password) || !DigitRegex.IsMatch(password))
+            return ErrorKeys.PasswordComplexity;
+        return null;
+    }
+
     public static string? ValidateTerms(bool accepted)
     {
         return accepted ? null : ErrorKeys.TermsRequired;

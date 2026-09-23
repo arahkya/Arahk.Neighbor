@@ -26,3 +26,9 @@ public record OtpSessionInfo(
     string MaskedEmail,
     int CooldownSecondsRemaining,
     int RemainingAttempts);
+
+public record ProfileDto(Guid UserId, string DisplayName, string Email, string? PhoneLocal);
+
+public record UpdateProfileRequest(string DisplayName, string? Phone);
+
+public record ChangePasswordRequest(string CurrentPassword, string NewPassword, string NewPasswordConfirm);

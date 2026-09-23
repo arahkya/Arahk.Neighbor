@@ -33,6 +33,15 @@ public class AuthSessionState
         Changed?.Invoke();
     }
 
+    /// <summary>Refresh display name after profile save (AppBar initials + welcome).</summary>
+    public void UpdateDisplayName(string displayName)
+    {
+        if (!IsAuthenticated)
+            return;
+        DisplayName = displayName;
+        Changed?.Invoke();
+    }
+
     public void SetPendingOtp(Guid userId, string email, string maskedEmail)
     {
         PendingOtpUserId = userId;
