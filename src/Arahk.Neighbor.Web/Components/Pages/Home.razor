@@ -1,0 +1,36 @@
+@page "/"
+@rendermode InteractiveServer
+@using MudBlazor
+@using Arahk.Neighbor.Web.Services
+@inject AuthSessionState Session
+@inject NavigationManager Nav
+
+@if (!Session.IsAuthenticated)
+{
+    <p>@ThaiCopy.T("state.loading")</p>
+}
+else
+{
+    <MudPaper Class="pa-6 home-card" Elevation="2">
+        <MudText Typo="Typo.h5">@ThaiCopy.T("home.welcome")</MudText>
+        <MudText Class="mt-2">@ThaiCopy.T("home.signed_in_as") <strong>@Session.DisplayName</strong></MudText>
+        <MudText Typo="Typo.caption" Class="mt-1">@Session.Email</MudText>
+        <MudButton Class="mt-4" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Logout">
+            @ThaiCopy.T("home.logout")
+        </MudButton>
+    </MudPaper>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        if (!Session.IsAuthenticated)
+            Nav.NavigateTo("/login");
+    }
+
+    private void Logout()
+    {
+        Session.SignOut();
+        Nav.NavigateTo("/login");
+    }
+}

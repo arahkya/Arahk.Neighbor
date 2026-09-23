@@ -1,0 +1,123 @@
+@page "/register"
+@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@rendermode InteractiveServer
+@using MudBlazor
+@using Arahk.Neighbor.Application.Models
+@using Arahk.Neighbor.Application.Services
+@using Arahk.Neighbor.Domain.Constants
+@using Arahk.Neighbor.Web.Services
+@inject RegisterUserService RegisterSvc
+@inject AuthSessionState Session
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<div class="brand">
+    <div class="wordmark">@ThaiCopy.T("app.wordmark")</div>
+    <div class="tagline">@ThaiCopy.T("app.tagline")</div>
+</div>
+
+<MudText Typo="Typo.h5" Class="auth-title mb-4">@ThaiCopy.T("register.title")</MudText>
+
+@if (!string.IsNullOrEmpty(_formError))
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+}
+
+<MudTextField @bind-Value="_displayName" Label="@ThaiCopy.T("register.displayname.label")"
+              Placeholder="@ThaiCopy.T("register.displayname.placeholder")"
+              HelperText="@ThaiCopy.T("register.displayname.helper")" Variant="Variant.Outlined"
+              Immediate="true" Error="@E(_dnErr)" ErrorText="@_dnErr" Class="mb-3" />
+
+<MudTextField @bind-Value="_email" Label="@ThaiCopy.T("register.email.label")"
+              Placeholder="@ThaiCopy.T("register.email.placeholder")"
+              HelperText="@ThaiCopy.T("register.email.helper")" Variant="Variant.Outlined"
+              Immediate="true" InputType="InputType.Email" Error="@E(_emailErr)" ErrorText="@_emailErr" Class="mb-3" />
+
+<MudTextField @bind-Value="_phone" Label="@ThaiCopy.T("register.phone.label")"
+              Placeholder="@ThaiCopy.T("register.phone.placeholder")"
+              HelperText="@ThaiCopy.T("register.phone.helper")" Variant="Variant.Outlined"
+              Immediate="true" Error="@E(_phoneErr)" ErrorText="@_phoneErr" Class="mb-3" />
+
+<MudTextField @bind-Value="_password" Label="@ThaiCopy.T("register.password.label")"
+              Placeholder="@ThaiCopy.T("register.password.placeholder")"
+              HelperText="@ThaiCopy.T("register.password.helper")" Variant="Variant.Outlined"
+              Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
+              Adornment="Adornment.End"
+              AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+              OnAdornmentClick="@(() => _showPw = !_showPw)"
+              Error="@E(_pwErr)" ErrorText="@_pwErr" Class="mb-3" />
+
+<MudTextField @bind-Value="_passwordConfirm" Label="@ThaiCopy.T("register.password_confirm.label")"
+              Placeholder="@ThaiCopy.T("register.password_confirm.placeholder")" Variant="Variant.Outlined"
+              Immediate="true" InputType="@(_showPw2 ? InputType.Text : InputType.Password)"
+              Adornment="Adornment.End"
+              AdornmentIcon="@(_showPw2 ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+              OnAdornmentClick="@(() => _showPw2 = !_showPw2)"
+              Error="@E(_pw2Err)" ErrorText="@_pw2Err" Class="mb-3" />
+
+<div class="terms-row mb-3">
+    <MudCheckBox @bind-Value="_terms" Color="Color.Primary" Dense="true" />
+    <span class="terms-text">
+        @ThaiCopy.T("register.terms.prefix")
+        <a href="#" @onclick:preventDefault>@ThaiCopy.T("register.terms.tos")</a>
+        @ThaiCopy.T("register.terms.and")
+        <a href="#" @onclick:preventDefault>@ThaiCopy.T("register.terms.privacy")</a>
+    </span>
+</div>
+@if (!string.IsNullOrEmpty(_termsErr))
+{
+    <MudText Typo="Typo.caption" Class="mud-error-text mb-2">@_termsErr</MudText>
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+           OnClick="SubmitAsync" Class="auth-cta" Size="Size.Large">
+    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
+    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("register.cta"))
+</MudButton>
+
+<div class="auth-footer">
+    <MudLink Href="/login">@ThaiCopy.T("register.link.login")</MudLink>
+</div>
+
+@code {
+    private string _displayName = "", _email = "", _phone = "", _password = "", _passwordConfirm = "";
+    private bool _terms, _showPw, _showPw2, _busy;
+    private string? _dnErr, _emailErr, _phoneErr, _pwErr, _pw2Err, _termsErr, _formError;
+
+    private static bool E(string? e) => !string.IsNullOrEmpty(e);
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsAuthenticated) Nav.NavigateTo("/");
+    }
+
+    private async Task SubmitAsync()
+    {
+        _dnErr = _emailErr = _phoneErr = _pwErr = _pw2Err = _termsErr = _formError = null;
+        _busy = true;
+        try
+        {
+            var result = await RegisterSvc.ExecuteAsync(new RegisterRequest(
+                _displayName, _email, string.IsNullOrWhiteSpace(_phone) ? null : _phone,
+                _password, _passwordConfirm, _terms));
+
+            if (!result.Succeeded)
+            {
+                if (result.FieldErrors.TryGetValue("displayName", out var a)) _dnErr = ThaiCopy.T(a);
+                if (result.FieldErrors.TryGetValue("email", out var b)) _emailErr = ThaiCopy.T(b);
+                if (result.FieldErrors.TryGetValue("phone", out var c)) _phoneErr = ThaiCopy.T(c);
+                if (result.FieldErrors.TryGetValue("password", out var d)) _pwErr = ThaiCopy.T(d);
+                if (result.FieldErrors.TryGetValue("passwordConfirm", out var e)) _pw2Err = ThaiCopy.T(e);
+                if (result.FieldErrors.TryGetValue("terms", out var f)) _termsErr = ThaiCopy.T(f);
+                if (!string.IsNullOrEmpty(result.ErrorKey)) _formError = ThaiCopy.T(result.ErrorKey);
+                return;
+            }
+
+            Snackbar.Add(ThaiCopy.T("register.success.otp_sent"), Severity.Success);
+            Session.SetPendingOtp(result.Data!.UserId, result.Data.Email, result.Data.MaskedEmail);
+            Nav.NavigateTo("/verify-email");
+        }
+        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
+        finally { _busy = false; }
+    }
+}

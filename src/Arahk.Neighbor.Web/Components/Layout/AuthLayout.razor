@@ -1,0 +1,18 @@
+@inherits LayoutComponentBase
+@using MudBlazor
+@using Arahk.Neighbor.Web.Theme
+
+<MudThemeProvider Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<div class="auth-page">
+    <div class="auth-card">
+        @Body
+    </div>
+</div>
+
+@code {
+    private readonly MudTheme _theme = NeighborTheme.Create();
+}

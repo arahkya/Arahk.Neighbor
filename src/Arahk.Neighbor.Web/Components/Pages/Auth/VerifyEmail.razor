@@ -1,0 +1,144 @@
+@page "/verify-email"
+@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@rendermode InteractiveServer
+@using MudBlazor
+@using Arahk.Neighbor.Application.Models
+@using Arahk.Neighbor.Application.Services
+@using Arahk.Neighbor.Domain.Constants
+@using Arahk.Neighbor.Infrastructure.Email
+@using Arahk.Neighbor.Web.Services
+@inject VerifyOtpService VerifySvc
+@inject ResendOtpService ResendSvc
+@inject AuthSessionState Session
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+@inject InMemoryEmailSender EmailSink
+@implements IDisposable
+
+<div class="brand">
+    <div class="wordmark">@ThaiCopy.T("app.wordmark")</div>
+    <div class="tagline">@ThaiCopy.T("app.tagline")</div>
+</div>
+
+<MudText Typo="Typo.h5" Class="auth-title mb-2">@ThaiCopy.T("otp.title")</MudText>
+<MudText Typo="Typo.body2" Class="auth-subtitle mb-4">
+    @ThaiCopy.T("otp.subtitle") <strong>@_masked</strong>
+</MudText>
+
+@if (!string.IsNullOrEmpty(_formError))
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+}
+
+<MudTextField @bind-Value="_code" Label="@ThaiCopy.T("otp.field_label")"
+              Placeholder="@ThaiCopy.T("otp.placeholder")" Variant="Variant.Outlined"
+              Immediate="true" MaxLength="6" HelperText="@ThaiCopy.T("otp.helper_expiry")"
+              Error="@(!string.IsNullOrEmpty(_codeErr))" ErrorText="@_codeErr"
+              Class="mb-3 otp-input" InputMode="InputMode.numeric" />
+
+@if (_isDev)
+{
+    <MudAlert Severity="Severity.Info" Dense="true" Class="mb-3">
+        @ThaiCopy.T("dev.otp_hint"): <strong>@(EmailSink.LastOtpCode ?? "-")</strong>
+    </MudAlert>
+}
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+           OnClick="VerifyAsync" Class="auth-cta mb-3" Size="Size.Large">
+    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
+    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("otp.cta"))
+</MudButton>
+
+<MudButton Variant="Variant.Outlined" Color="Color.Default" FullWidth="true"
+           Disabled="@(_cooldown > 0 || _resending)" OnClick="ResendAsync" Class="mb-3" Size="Size.Large">
+    @(_cooldown > 0
+        ? ThaiCopy.Format("otp.resend_in", ("seconds", _cooldown))
+        : ThaiCopy.T("otp.resend"))
+</MudButton>
+
+<div class="auth-footer">
+    <MudLink Href="/register">@ThaiCopy.T("otp.back")</MudLink>
+</div>
+
+@code {
+    private string _code = "";
+    private string _masked = "";
+    private Guid _userId;
+    private bool _busy, _resending, _isDev;
+    private string? _codeErr, _formError;
+    private int _cooldown;
+    private System.Threading.Timer? _timer;
+
+    protected override void OnInitialized()
+    {
+        _isDev = true; // local demo always shows OTP sink
+        if (Session.PendingOtpUserId is null)
+        {
+            Nav.NavigateTo("/register");
+            return;
+        }
+        _userId = Session.PendingOtpUserId.Value;
+        _masked = Session.PendingOtpMaskedEmail ?? Session.PendingOtpEmail ?? "";
+        _cooldown = 60;
+        _timer = new System.Threading.Timer(_ =>
+        {
+            if (_cooldown > 0)
+            {
+                _cooldown--;
+                InvokeAsync(StateHasChanged);
+            }
+        }, null, 1000, 1000);
+    }
+
+    private async Task VerifyAsync()
+    {
+        _codeErr = _formError = null;
+        _busy = true;
+        try
+        {
+            var result = await VerifySvc.ExecuteAsync(new VerifyOtpRequest(_userId, _code));
+            if (!result.Succeeded)
+            {
+                if (result.ErrorKey == ErrorKeys.OtpInvalidRemaining && result.RemainingAttempts is int n)
+                    _codeErr = ThaiCopy.Format(ErrorKeys.OtpInvalidRemaining, ("n", n));
+                else if (!string.IsNullOrEmpty(result.ErrorKey))
+                    _codeErr = ThaiCopy.T(result.ErrorKey);
+                return;
+            }
+            Snackbar.Add(ThaiCopy.T("otp.success"), Severity.Success);
+            var data = result.Data!;
+            Session.SignIn(data.UserId, data.DisplayName, data.Email);
+            Nav.NavigateTo("/");
+        }
+        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
+        finally { _busy = false; }
+    }
+
+    private async Task ResendAsync()
+    {
+        if (_cooldown > 0) return;
+        _resending = true;
+        _formError = null;
+        try
+        {
+            var result = await ResendSvc.ExecuteAsync(new ResendOtpRequest(_userId));
+            if (!result.Succeeded)
+            {
+                if (result.ErrorKey == ErrorKeys.OtpCooldown && result.CooldownSeconds is int s)
+                {
+                    _cooldown = s;
+                    _formError = ThaiCopy.T(ErrorKeys.OtpCooldown);
+                }
+                else if (!string.IsNullOrEmpty(result.ErrorKey))
+                    _formError = ThaiCopy.T(result.ErrorKey);
+                return;
+            }
+            _cooldown = result.Data?.CooldownSecondsRemaining ?? 60;
+            Snackbar.Add(ThaiCopy.T("otp.toast.resent"), Severity.Success);
+        }
+        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
+        finally { _resending = false; }
+    }
+
+    public void Dispose() => _timer?.Dispose();
+}

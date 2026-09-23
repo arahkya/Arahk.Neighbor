@@ -1,0 +1,125 @@
+@page "/login"
+@layout Arahk.Neighbor.Web.Components.Layout.AuthLayout
+@rendermode InteractiveServer
+@using MudBlazor
+@using Arahk.Neighbor.Application.Models
+@using Arahk.Neighbor.Application.Services
+@using Arahk.Neighbor.Domain.Constants
+@using Arahk.Neighbor.Web.Services
+@inject LoginService LoginSvc
+@inject AuthSessionState Session
+@inject NavigationManager Nav
+@inject ISnackbar Snackbar
+
+<div class="brand">
+    <div class="wordmark">@ThaiCopy.T("app.wordmark")</div>
+    <div class="tagline">@ThaiCopy.T("app.tagline")</div>
+</div>
+
+<MudText Typo="Typo.h5" Class="auth-title mb-4">@ThaiCopy.T("login.title")</MudText>
+
+<div class="mode-toggle mb-4">
+    <MudButton Variant="@(_mode == LoginMode.Email ? Variant.Filled : Variant.Text)"
+               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Email))" Class="mode-btn">
+        @ThaiCopy.T("login.mode.email")
+    </MudButton>
+    <MudButton Variant="@(_mode == LoginMode.Phone ? Variant.Filled : Variant.Text)"
+               Color="Color.Primary" OnClick="@(() => SwitchMode(LoginMode.Phone))" Class="mode-btn">
+        @ThaiCopy.T("login.mode.phone")
+    </MudButton>
+</div>
+
+@if (!string.IsNullOrEmpty(_formError))
+{
+    <MudAlert Severity="Severity.Error" Dense="true" Class="mb-3">@_formError</MudAlert>
+}
+
+@if (_mode == LoginMode.Email)
+{
+    <MudTextField @bind-Value="_email" Label="@ThaiCopy.T("login.email.label")"
+                  Placeholder="@ThaiCopy.T("login.email.placeholder")" Variant="Variant.Outlined"
+                  Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr" Class="mb-3"
+                  InputType="InputType.Email" />
+}
+else
+{
+    <MudTextField @bind-Value="_phone" Label="@ThaiCopy.T("login.phone.label")"
+                  Placeholder="@ThaiCopy.T("login.phone.placeholder")"
+                  HelperText="@ThaiCopy.T("login.phone.helper")" Variant="Variant.Outlined"
+                  Immediate="true" Error="@HasErr(ref _idErr)" ErrorText="@_idErr" Class="mb-3" />
+}
+
+<MudTextField @bind-Value="_password" Label="@ThaiCopy.T("login.password.label")"
+              Placeholder="@ThaiCopy.T("login.password.placeholder")" Variant="Variant.Outlined"
+              Immediate="true" InputType="@(_showPw ? InputType.Text : InputType.Password)"
+              Adornment="Adornment.End"
+              AdornmentIcon="@(_showPw ? Icons.Material.Filled.VisibilityOff : Icons.Material.Filled.Visibility)"
+              OnAdornmentClick="@(() => _showPw = !_showPw)"
+              Error="@HasErr(ref _pwErr)" ErrorText="@_pwErr" Class="mb-1" />
+
+<div class="forgot-row">
+    <MudLink Typo="Typo.body2" Class="forgot-link" OnClick="OnForgot">@ThaiCopy.T("login.link.forgot")</MudLink>
+</div>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_busy"
+           OnClick="SubmitAsync" Class="auth-cta mt-2" Size="Size.Large">
+    @if (_busy) { <MudProgressCircular Size="Size.Small" Indeterminate="true" Class="mr-2" Color="Color.Surface" /> }
+    @(_busy ? ThaiCopy.T("state.submitting") : ThaiCopy.T("login.cta"))
+</MudButton>
+
+<div class="auth-footer">
+    <MudLink Href="/register">@ThaiCopy.T("login.link.register")</MudLink>
+</div>
+
+@code {
+    private LoginMode _mode = LoginMode.Email;
+    private string _email = "", _phone = "", _password = "";
+    private bool _showPw, _busy;
+    private string? _idErr, _pwErr, _formError;
+
+    private static bool HasErr(ref string? e) => !string.IsNullOrEmpty(e);
+
+    protected override void OnInitialized()
+    {
+        if (Session.IsAuthenticated) Nav.NavigateTo("/");
+    }
+
+    private void SwitchMode(LoginMode mode) { _mode = mode; _idErr = null; _formError = null; }
+    private void OnForgot() => Snackbar.Add(ThaiCopy.T("login.forgot.soon"), Severity.Info);
+
+    private async Task SubmitAsync()
+    {
+        _idErr = _pwErr = _formError = null;
+        _busy = true;
+        try
+        {
+            var id = _mode == LoginMode.Email ? _email : _phone;
+            var result = await LoginSvc.ExecuteAsync(new LoginRequest(_mode, id, _password));
+            if (!result.Succeeded)
+            {
+                if (result.FieldErrors.TryGetValue("identifier", out var ie)) _idErr = ThaiCopy.T(ie);
+                if (result.FieldErrors.TryGetValue("password", out var pe)) _pwErr = ThaiCopy.T(pe);
+                if (!string.IsNullOrEmpty(result.ErrorKey)) _formError = ThaiCopy.T(result.ErrorKey);
+                return;
+            }
+            var data = result.Data!;
+            if (!data.EmailVerified)
+            {
+                Session.SetPendingOtp(data.UserId, data.Email, Mask(data.Email));
+                Nav.NavigateTo("/verify-email");
+                return;
+            }
+            Session.SignIn(data.UserId, data.DisplayName, data.Email);
+            Nav.NavigateTo("/");
+        }
+        catch { _formError = ThaiCopy.T(ErrorKeys.NetworkGeneric); }
+        finally { _busy = false; }
+    }
+
+    private static string Mask(string email)
+    {
+        var at = email.IndexOf('@');
+        if (at <= 0) return email;
+        return email[..Math.Min(2, at)] + "***" + email[at..];
+    }
+}

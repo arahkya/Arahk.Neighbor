@@ -1,0 +1,31 @@
+@inherits LayoutComponentBase
+@using MudBlazor
+@using Arahk.Neighbor.Web.Services
+@using Arahk.Neighbor.Web.Theme
+@inject AuthSessionState Session
+@inject NavigationManager Nav
+
+<MudThemeProvider Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+    <MudAppBar Elevation="1" Color="Color.Primary">
+        <MudText Typo="Typo.h6" Class="wordmark">Neighbor</MudText>
+        <MudSpacer />
+        @if (Session.IsAuthenticated)
+        {
+            <MudText Class="mr-4">@Session.DisplayName</MudText>
+            <MudButton Variant="Variant.Text" Color="Color.Inherit" OnClick="Logout">@ThaiCopy.T("home.logout")</MudButton>
+        }
+    </MudAppBar>
+    <MudMainContent Class="pa-4 main-bg">
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private readonly MudTheme _theme = NeighborTheme.Create();
+    private void Logout() { Session.SignOut(); Nav.NavigateTo("/login"); }
+}
