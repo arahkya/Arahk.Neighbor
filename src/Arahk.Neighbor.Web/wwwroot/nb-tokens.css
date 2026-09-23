@@ -1,0 +1,199 @@
+/**
+ * Neighbor (เพื่อนบ้าน) — Design System Tokens (canonical)
+ * ========================================================
+ * Programmer MUST import/port THIS file only as the single source of truth
+ * for colors, spacing, radii, typography, and control sizes across the app.
+ *
+ * Rules:
+ * 1. New UI MUST reference these `--nb-*` tokens only.
+ * 2. Do NOT hardcode design px / hex outside this file (use var(--nb-…)).
+ * 3. Numeric values match the QA-approved auth UI package
+ *    (/workspace/neighbor-auth-ui/tokens.css) — renamed with `--nb-` prefix.
+ * 4. Migration from auth token names → see token-mapping.md
+ *
+ * Palette locked: Primary #2F9E7A · Background #F7F3EB · Accent #E8A25B
+ * Wordmark: "Neighbor" (no logo)
+ */
+
+:root {
+  /* ========== Colors ========== */
+  --nb-color-primary: #2F9E7A;
+  --nb-color-primary-hover: #278A6A;
+  --nb-color-primary-active: #217359;
+  --nb-color-primary-muted: #E6F5EF;
+
+  --nb-color-bg: #F7F3EB;
+  --nb-color-surface: #FFFFFF;
+  --nb-color-surface-subtle: #FBF9F5;
+
+  --nb-color-accent: #E8A25B;
+  --nb-color-accent-soft: #FDF3E8;
+
+  --nb-color-text-primary: #1A1A1A;
+  --nb-color-text-secondary: #5C5C5C;
+  --nb-color-text-muted: #8A8A8A;
+  --nb-color-text-on-primary: #FFFFFF;
+  --nb-color-text-placeholder: #9A9A9A;
+
+  --nb-color-border: #E2DDD4;
+  --nb-color-border-strong: #C8C2B6;
+  --nb-color-border-focus: #2F9E7A;
+
+  --nb-color-error: #C23B3B;
+  --nb-color-error-bg: #FDF0F0;
+  --nb-color-error-border: #E8A0A0;
+
+  --nb-color-focus-ring: rgba(47, 158, 122, 0.35);
+  --nb-color-focus-ring-accent: rgba(232, 162, 91, 0.4);
+  --nb-color-focus-ring-error: rgba(194, 59, 59, 0.25);
+
+  --nb-color-disabled-bg: #EDE9E1;
+  --nb-color-disabled-text: #A8A39A;
+  --nb-color-disabled-border: #DED9D0;
+
+  --nb-color-success: #2F9E7A;
+  --nb-color-toast-bg: #1A1A1A;
+  --nb-color-toast-text: #FFFFFF;
+
+  /* Primary button soft shadow tint (from approved auth recipe) */
+  --nb-color-primary-shadow: rgba(47, 158, 122, 0.25);
+  --nb-color-primary-shadow-strong: rgba(47, 158, 122, 0.35);
+
+  /* ========== Spacing (4/8-based scale) ========== */
+  --nb-space-1: 4px;
+  --nb-space-2: 8px;
+  --nb-space-3: 12px;
+  --nb-space-4: 16px;
+  --nb-space-5: 20px;
+  --nb-space-6: 24px;
+  --nb-space-7: 28px;
+  --nb-space-8: 32px;
+  --nb-space-10: 40px;
+  --nb-space-12: 48px;
+
+  /* Semantic layout spacing (values = scale or approved auth pads) */
+  --nb-space-page-x-mobile: 16px;   /* = space-4 */
+  --nb-space-page-y-mobile: 24px;   /* = space-6 */
+  --nb-space-page-desktop: 48px;   /* = space-12 */
+  --nb-space-card-x: 24px;         /* = space-6 */
+  --nb-space-card-y: 32px;         /* = space-8 */
+  --nb-space-field-gap: 16px;      /* = space-4 */
+  --nb-space-label-gap: 6px;       /* label → control; approved auth */
+  --nb-space-helper-gap: 6px;      /* control → helper/error */
+  --nb-space-toggle-pad: 3px;      /* segmented tray inset */
+  --nb-space-input-x: 14px;        /* input horizontal padding */
+  --nb-space-button-x: 20px;       /* = space-5 */
+  --nb-space-toast-y: 12px;        /* = space-3 */
+  --nb-space-toast-x: 18px;        /* toast horizontal pad */
+  --nb-space-toast-offset: 24px;   /* = space-6 · distance from viewport edge */
+  --nb-space-terms-gap: 10px;      /* checkbox ↔ terms text */
+  --nb-space-after-toggle: 20px;   /* = space-5 · toggle → first field */
+  --nb-space-link-mt: 16px;        /* = space-4 */
+  --nb-space-link-muted-mt: 12px;  /* = space-3 */
+  --nb-space-secondary-btn-mt: 12px;
+
+  /* ========== Radii ========== */
+  --nb-radius-input: 10px;
+  --nb-radius-button: 12px;
+  --nb-radius-card: 16px;
+  --nb-radius-otp: 10px;
+  --nb-radius-toggle: 10px;
+  --nb-radius-toggle-item: 8px;
+  --nb-radius-checkbox: 4px;
+  --nb-radius-toast: 10px;
+  --nb-radius-pill: 999px;
+  --nb-radius-eye: 8px;
+  --nb-radius-focus-outline: 2px;
+
+  /* ========== Typography ========== */
+  --nb-font-family: "Noto Sans Thai", "Sarabun", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+  /* Role tokens as shorthand font (weight size/line-height family) */
+  --nb-font-wordmark: 700 24px/1.2 var(--nb-font-family);
+  --nb-font-title: 600 20px/1.3 var(--nb-font-family);
+  --nb-font-body: 400 15px/1.5 var(--nb-font-family);
+  --nb-font-label: 600 13px/1.4 var(--nb-font-family);
+  --nb-font-helper: 400 12px/1.45 var(--nb-font-family);
+  --nb-font-error: 400 12px/1.45 var(--nb-font-family);
+  --nb-font-link: 500 13px/1.4 var(--nb-font-family);
+  --nb-font-button: 600 16px/1.25 var(--nb-font-family);
+  --nb-font-otp: 600 20px/1 var(--nb-font-family);
+  --nb-font-tagline: 400 12px/1.4 var(--nb-font-family);
+  --nb-font-toggle: 500 13px/1.3 var(--nb-font-family);
+  --nb-font-toast: 500 13px/1.4 var(--nb-font-family);
+  --nb-font-eye: 500 12px/1 var(--nb-font-family);
+  --nb-font-terms: 400 13px/1.5 var(--nb-font-family);
+  --nb-font-button-secondary: 500 14px/1.25 var(--nb-font-family);
+
+  /* Atomic type sizes / weights (for frameworks that prefer separate props) */
+  --nb-font-size-wordmark: 24px;
+  --nb-font-size-title: 20px;
+  --nb-font-size-body: 15px;
+  --nb-font-size-label: 13px;
+  --nb-font-size-helper: 12px;
+  --nb-font-size-button: 16px;
+  --nb-font-size-otp: 20px;
+  --nb-font-size-tagline: 12px;
+  --nb-font-size-toast: 13px;
+  --nb-font-size-button-secondary: 14px;
+
+  --nb-font-weight-regular: 400;
+  --nb-font-weight-medium: 500;
+  --nb-font-weight-semibold: 600;
+  --nb-font-weight-bold: 700;
+
+  --nb-line-height-wordmark: 1.2;
+  --nb-line-height-title: 1.3;
+  --nb-line-height-body: 1.5;
+  --nb-line-height-label: 1.4;
+  --nb-line-height-helper: 1.45;
+  --nb-line-height-button: 1.25;
+  --nb-line-height-otp: 1;
+  --nb-line-height-tagline: 1.4;
+  --nb-line-height-toggle: 1.3;
+
+  /* ========== Control / layout sizes ========== */
+  --nb-size-input-height: 48px;
+  --nb-size-button-height: 48px;
+  --nb-size-otp-cell: 48px;
+  --nb-size-otp-gap: 8px;
+  --nb-size-checkbox: 20px;
+  --nb-size-toggle-height: 44px;
+  --nb-size-icon-eye: 20px;
+  --nb-size-eye-btn: 36px;
+  --nb-size-spinner: 18px;
+  --nb-size-spinner-border: 2px;
+
+  --nb-size-card-width-mobile: 390px;
+  --nb-size-card-width-desktop: 420px;
+  --nb-size-viewport-desktop: 1280px;
+
+  /* Input with eye: right padding clears the eye button */
+  --nb-size-input-pad-right-eye: 48px;
+
+  /* ========== Borders ========== */
+  --nb-border-width: 1.5px;
+  --nb-border-width-focus: 2px;
+  --nb-border-width-hairline: 1px;
+
+  /* ========== Shadows ========== */
+  --nb-shadow-card: 0 4px 24px rgba(26, 26, 26, 0.06), 0 1px 4px rgba(26, 26, 26, 0.04);
+  --nb-shadow-card-hover: 0 8px 32px rgba(26, 26, 26, 0.08);
+  --nb-shadow-toast: 0 8px 24px rgba(26, 26, 26, 0.18);
+  --nb-shadow-focus: 0 0 0 3px var(--nb-color-focus-ring);
+  --nb-shadow-focus-error: 0 0 0 3px var(--nb-color-focus-ring-error);
+  --nb-shadow-button-primary: 0 1px 2px var(--nb-color-primary-shadow);
+  --nb-shadow-toggle-active: 0 1px 3px var(--nb-color-primary-shadow-strong);
+
+  /* ========== Motion ========== */
+  --nb-motion-fast: 120ms ease;
+  --nb-motion-base: 180ms ease;
+  --nb-motion-spin: 0.7s linear infinite;
+  /* Loading spinner on primary button only — no page transitions required by DS */
+
+  /* Spinner track on primary button (from approved auth recipe) */
+  --nb-color-spinner-track: rgba(255, 255, 255, 0.35);
+
+  /* Wordmark tracking */
+  --nb-letter-spacing-wordmark: 0.01em;
+}

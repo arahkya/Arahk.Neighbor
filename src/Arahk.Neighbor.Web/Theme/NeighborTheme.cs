@@ -2,84 +2,89 @@ using MudBlazor;
 
 namespace Arahk.Neighbor.Web.Theme;
 
+/// <summary>
+/// MudBlazor theme aligned with Neighbor Design System (<c>--nb-*</c> / <see cref="NeighborDesignTokens"/>).
+/// Prefer CSS <c>var(--nb-*)</c> for custom UI; this theme covers MudBlazor primitives.
+/// </summary>
 public static class NeighborTheme
 {
     public static MudTheme Create() => new()
     {
         PaletteLight = new PaletteLight
         {
-            Primary = "#2F9E7A",
-            Secondary = "#E8A25B",
-            Background = "#F7F3EB",
-            Surface = "#FFFFFF",
-            AppbarBackground = "#2F9E7A",
-            AppbarText = "#FFFFFF",
-            TextPrimary = "#1A1A1A",
-            TextSecondary = "#5C5C5C",
-            Error = "#C23B3B",
-            DrawerBackground = "#FFFFFF",
-            DrawerText = "#1A1A1A",
-            LinesDefault = "#E2DDD4",
-            Divider = "#E2DDD4",
-            ActionDisabledBackground = "#EDE9E1",
-            ActionDisabled = "#A8A39A",
+            Primary = NeighborDesignTokens.ColorPrimary,
+            Secondary = NeighborDesignTokens.ColorAccent,
+            Background = NeighborDesignTokens.ColorBg,
+            Surface = NeighborDesignTokens.ColorSurface,
+            AppbarBackground = NeighborDesignTokens.ColorPrimary,
+            AppbarText = NeighborDesignTokens.ColorTextOnPrimary,
+            TextPrimary = NeighborDesignTokens.ColorTextPrimary,
+            TextSecondary = NeighborDesignTokens.ColorTextSecondary,
+            Error = NeighborDesignTokens.ColorError,
+            DrawerBackground = NeighborDesignTokens.ColorSurface,
+            DrawerText = NeighborDesignTokens.ColorTextPrimary,
+            LinesDefault = NeighborDesignTokens.ColorBorder,
+            Divider = NeighborDesignTokens.ColorBorder,
+            ActionDisabledBackground = NeighborDesignTokens.ColorDisabledBg,
+            ActionDisabled = NeighborDesignTokens.ColorDisabledText,
         },
         Typography = new Typography
         {
             Default = new DefaultTypography
             {
-                FontFamily = ["Noto Sans Thai", "Sarabun", "system-ui", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
-                FontSize = "0.9375rem", // 15px body
-                FontWeight = "400",
-                LineHeight = "1.5",
+                FontFamily = NeighborDesignTokens.FontFamily,
+                FontSize = NeighborDesignTokens.FontSizeBody,
+                FontWeight = NeighborDesignTokens.FontWeightRegular,
+                LineHeight = NeighborDesignTokens.LineHeightBody,
             },
             H5 = new H5Typography
             {
-                FontSize = "1.25rem", // 20px title
-                FontWeight = "600",
-                LineHeight = "1.3",
+                FontSize = NeighborDesignTokens.FontSizeTitle,
+                FontWeight = NeighborDesignTokens.FontWeightSemibold,
+                LineHeight = NeighborDesignTokens.LineHeightTitle,
             },
             H6 = new H6Typography
             {
-                FontSize = "1.5rem", // 24px wordmark contexts
-                FontWeight = "700",
-                LineHeight = "1.2",
+                FontSize = NeighborDesignTokens.FontSizeWordmark,
+                FontWeight = NeighborDesignTokens.FontWeightBold,
+                LineHeight = NeighborDesignTokens.LineHeightWordmark,
             },
             Body1 = new Body1Typography
             {
-                FontSize = "0.9375rem", // 15px
-                FontWeight = "400",
-                LineHeight = "1.5",
+                FontSize = NeighborDesignTokens.FontSizeBody,
+                FontWeight = NeighborDesignTokens.FontWeightRegular,
+                LineHeight = NeighborDesignTokens.LineHeightBody,
             },
             Body2 = new Body2Typography
             {
-                FontSize = "0.8125rem", // 13px link / secondary
-                FontWeight = "500",
-                LineHeight = "1.4",
+                FontSize = NeighborDesignTokens.FontSizeLink,
+                FontWeight = NeighborDesignTokens.FontWeightMedium,
+                LineHeight = NeighborDesignTokens.LineHeightLabel,
             },
             Caption = new CaptionTypography
             {
-                FontSize = "0.75rem", // 12px helper
-                FontWeight = "400",
-                LineHeight = "1.45",
+                FontSize = NeighborDesignTokens.FontSizeHelper,
+                FontWeight = NeighborDesignTokens.FontWeightRegular,
+                LineHeight = NeighborDesignTokens.LineHeightHelper,
             },
             Button = new ButtonTypography
             {
-                FontSize = "1rem", // 16px
-                FontWeight = "600",
+                FontSize = NeighborDesignTokens.FontSizeButton,
+                FontWeight = NeighborDesignTokens.FontWeightSemibold,
                 TextTransform = "none",
-                LineHeight = "1.25",
+                LineHeight = NeighborDesignTokens.LineHeightButton,
             },
             Subtitle2 = new Subtitle2Typography
             {
-                FontSize = "0.8125rem", // 13px label
-                FontWeight = "600",
-                LineHeight = "1.4",
+                FontSize = NeighborDesignTokens.FontSizeLabel,
+                FontWeight = NeighborDesignTokens.FontWeightSemibold,
+                LineHeight = NeighborDesignTokens.LineHeightLabel,
             },
         },
         LayoutProperties = new LayoutProperties
         {
-            DefaultBorderRadius = "12px",
+            // MudBlazor default radius → button radius token (12px)
+            DefaultBorderRadius = NeighborDesignTokens.RadiusButton,
         },
     };
 }

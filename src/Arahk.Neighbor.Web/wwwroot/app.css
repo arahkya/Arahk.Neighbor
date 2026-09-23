@@ -1,86 +1,14 @@
-/* Neighbor Auth — design tokens (aligned with neighbor-auth-ui/tokens.css) */
-:root {
-  /* Colors */
-  --nb-primary: #2F9E7A;
-  --nb-primary-hover: #278A6A;
-  --nb-primary-active: #217359;
-  --nb-primary-muted: #E6F5EF;
-  --nb-bg: #F7F3EB;
-  --nb-surface: #FFFFFF;
-  --nb-surface-subtle: #FBF9F5;
-  --nb-accent: #E8A25B;
-  --nb-accent-soft: #FDF3E8;
-  --nb-text: #1A1A1A;
-  --nb-text-secondary: #5C5C5C;
-  --nb-text-muted: #8A8A8A;
-  --nb-text-on-primary: #FFFFFF;
-  --nb-placeholder: #9A9A9A;
-  --nb-border: #E2DDD4;
-  --nb-border-strong: #C8C2B6;
-  --nb-error: #C23B3B;
-  --nb-error-bg: #FDF0F0;
-  --nb-focus-ring: rgba(47, 158, 122, 0.35);
-  --nb-disabled-bg: #EDE9E1;
-  --nb-disabled-text: #A8A39A;
-
-  /* Spacing 4–48 */
-  --nb-space-1: 4px;
-  --nb-space-2: 8px;
-  --nb-space-3: 12px;
-  --nb-space-4: 16px;
-  --nb-space-5: 20px;
-  --nb-space-6: 24px;
-  --nb-space-7: 28px;
-  --nb-space-8: 32px;
-  --nb-space-10: 40px;
-  --nb-space-12: 48px;
-
-  --nb-page-pad-x: 16px;
-  --nb-page-pad-y: 24px;
-  --nb-page-pad-desktop: 48px;
-  --nb-card-pad-x: 24px;
-  --nb-card-pad-y: 32px;
-  --nb-field-gap: 16px;
-
-  /* Radii */
-  --nb-radius-input: 10px;
-  --nb-radius-button: 12px;
-  --nb-radius-card: 16px;
-  --nb-radius-otp: 10px;
-  --nb-radius-toggle: 10px;
-  --nb-radius-checkbox: 4px;
-
-  /* Typography */
-  --nb-font-family: "Noto Sans Thai", "Sarabun", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --nb-font-wordmark: 700 24px/1.2 var(--nb-font-family);
-  --nb-font-title: 600 20px/1.3 var(--nb-font-family);
-  --nb-font-body: 400 15px/1.5 var(--nb-font-family);
-  --nb-font-label: 600 13px/1.4 var(--nb-font-family);
-  --nb-font-helper: 400 12px/1.45 var(--nb-font-family);
-  --nb-font-link: 500 13px/1.4 var(--nb-font-family);
-  --nb-font-button: 600 16px/1.25 var(--nb-font-family);
-  --nb-font-otp: 600 20px/1 var(--nb-font-family);
-  --nb-font-tagline: 400 12px/1.4 var(--nb-font-family);
-  --nb-font-toggle: 500 13px/1.3 var(--nb-font-family);
-
-  /* Sizes */
-  --nb-input-height: 48px;
-  --nb-button-height: 48px;
-  --nb-otp-cell-size: 48px;
-  --nb-otp-cell-gap: 8px;
-  --nb-checkbox-size: 20px;
-  --nb-toggle-height: 44px;
-  --nb-card-width-mobile: 390px;
-  --nb-card-width-desktop: 420px;
-
-  --nb-shadow-card: 0 4px 24px rgba(26, 26, 26, 0.06), 0 1px 4px rgba(26, 26, 26, 0.04);
-  --nb-shadow-focus: 0 0 0 3px var(--nb-focus-ring);
-}
+/**
+ * Neighbor Web — app styles
+ * Tokens: wwwroot/nb-tokens.css (canonical --nb-* from Neighbor Design System)
+ * Do NOT redefine design tokens here. Consume var(--nb-*) only.
+ * Numeric values match QA tip 6198633 (token wiring, not redesign).
+ */
 
 html, body {
   margin: 0;
-  background: var(--nb-bg);
-  color: var(--nb-text);
+  background: var(--nb-color-bg);
+  color: var(--nb-color-text-primary);
   font: var(--nb-font-body);
   font-family: var(--nb-font-family);
   -webkit-font-smoothing: antialiased;
@@ -92,30 +20,30 @@ html, body {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--nb-page-pad-y) var(--nb-page-pad-x) var(--nb-space-12);
-  background: var(--nb-bg);
+  padding: var(--nb-space-page-y-mobile) var(--nb-space-page-x-mobile) var(--nb-space-12);
+  background: var(--nb-color-bg);
 }
 
 @media (min-width: 768px) {
   .auth-page {
     align-items: center;
-    padding: var(--nb-page-pad-desktop) var(--nb-space-6);
+    padding: var(--nb-space-page-desktop) var(--nb-space-6);
   }
 }
 
 .auth-card {
   width: 100%;
-  max-width: var(--nb-card-width-mobile);
-  background: var(--nb-surface);
+  max-width: var(--nb-size-card-width-mobile);
+  background: var(--nb-color-surface);
   border-radius: var(--nb-radius-card);
-  padding: var(--nb-card-pad-y) var(--nb-card-pad-x);
-  border: 1px solid var(--nb-border);
+  padding: var(--nb-space-card-y) var(--nb-space-card-x);
+  border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none;
 }
 
 @media (min-width: 768px) {
   .auth-card {
-    max-width: var(--nb-card-width-desktop);
+    max-width: var(--nb-size-card-width-desktop);
     border-color: transparent;
     box-shadow: var(--nb-shadow-card);
   }
@@ -129,41 +57,42 @@ html, body {
 
 .brand .wordmark {
   font: var(--nb-font-wordmark);
-  color: var(--nb-primary);
-  letter-spacing: 0.01em;
+  color: var(--nb-color-primary);
+  letter-spacing: var(--nb-letter-spacing-wordmark);
+  /* 2px optical gap under wordmark — QA-locked (DS recipe uses space-1; do not change) */
   margin: 0 0 2px;
 }
 
 .brand .tagline {
   font: var(--nb-font-tagline);
-  color: var(--nb-text-muted);
+  color: var(--nb-color-text-muted);
   margin: 0 0 var(--nb-space-5);
 }
 
 .appbar-wordmark {
   font: var(--nb-font-wordmark);
-  color: var(--nb-text-on-primary) !important;
-  letter-spacing: 0.01em;
+  color: var(--nb-color-text-on-primary) !important;
+  letter-spacing: var(--nb-letter-spacing-wordmark);
 }
 
 .auth-title {
   text-align: center;
   font: var(--nb-font-title) !important;
-  color: var(--nb-text) !important;
+  color: var(--nb-color-text-primary) !important;
   margin: 0 0 var(--nb-space-6) !important;
 }
 
 .auth-subtitle {
   text-align: center;
   font: var(--nb-font-body) !important;
-  color: var(--nb-text-secondary) !important;
+  color: var(--nb-color-text-secondary) !important;
   margin: 0 0 var(--nb-space-1) !important;
 }
 
 .auth-email-mask {
   text-align: center;
-  font: 600 15px/1.4 var(--nb-font-family);
-  color: var(--nb-text);
+  font: var(--nb-font-weight-semibold) var(--nb-font-size-body)/1.4 var(--nb-font-family);
+  color: var(--nb-color-text-primary);
   margin: 0 0 var(--nb-space-6);
 }
 
@@ -171,46 +100,46 @@ html, body {
 .mode-toggle {
   display: flex;
   gap: 0;
-  background: var(--nb-surface-subtle);
-  border: 1.5px solid var(--nb-border);
+  background: var(--nb-color-surface-subtle);
+  border: var(--nb-border-width) solid var(--nb-color-border);
   border-radius: var(--nb-radius-toggle);
-  padding: 3px;
-  margin-bottom: var(--nb-space-5);
+  padding: var(--nb-space-toggle-pad);
+  margin-bottom: var(--nb-space-after-toggle);
 }
 
 .mode-toggle .mode-btn {
   flex: 1;
-  height: calc(var(--nb-toggle-height) - 6px) !important;
-  min-height: calc(var(--nb-toggle-height) - 6px) !important;
-  border-radius: 8px !important;
+  height: calc(var(--nb-size-toggle-height) - (2 * var(--nb-space-toggle-pad))) !important;
+  min-height: calc(var(--nb-size-toggle-height) - (2 * var(--nb-space-toggle-pad))) !important;
+  border-radius: var(--nb-radius-toggle-item) !important;
   font: var(--nb-font-toggle) !important;
   text-transform: none !important;
   box-shadow: none !important;
 }
 
 .mode-toggle .mode-btn.mud-button-filled {
-  font-weight: 600 !important;
-  box-shadow: 0 1px 3px rgba(47, 158, 122, 0.35) !important;
+  font-weight: var(--nb-font-weight-semibold) !important;
+  box-shadow: var(--nb-shadow-toggle-active) !important;
 }
 
 .mode-toggle .mode-btn.mud-button-text {
-  color: var(--nb-text-secondary) !important;
+  color: var(--nb-color-text-secondary) !important;
 }
 
 /* ——— Field stack ——— */
 .auth-field {
-  margin-bottom: var(--nb-field-gap) !important;
+  margin-bottom: var(--nb-space-field-gap) !important;
 }
 
 .auth-field:last-of-type {
-  margin-bottom: var(--nb-field-gap);
+  margin-bottom: var(--nb-space-field-gap);
 }
 
 .field-label {
   display: block;
   font: var(--nb-font-label);
-  color: var(--nb-text);
-  margin: 0 0 6px;
+  color: var(--nb-color-text-primary);
+  margin: 0 0 var(--nb-space-label-gap);
 }
 
 /* MudBlazor text field → mockup input (48px, 15px, radius 10) */
@@ -219,19 +148,19 @@ html, body {
 }
 
 .auth-card .auth-field .mud-input-control-helper-container {
-  margin-top: 6px;
-  padding: 0 2px;
+  margin-top: var(--nb-space-helper-gap);
+  padding: 0 2px; /* optical inset — not a DS token */
 }
 
 .auth-card .auth-field .mud-input-helper-text {
   font: var(--nb-font-helper) !important;
-  color: var(--nb-text-muted) !important;
-  line-height: 1.45 !important;
+  color: var(--nb-color-text-muted) !important;
+  line-height: var(--nb-line-height-helper) !important;
 }
 
 .auth-card .auth-field .mud-input-error {
-  font: var(--nb-font-helper) !important;
-  color: var(--nb-error) !important;
+  font: var(--nb-font-error) !important;
+  color: var(--nb-color-error) !important;
 }
 
 .auth-card .mud-input-outlined {
@@ -240,37 +169,37 @@ html, body {
 
 .auth-card .mud-input-outlined .mud-input-outlined-border {
   border-radius: var(--nb-radius-input) !important;
-  border-width: 1.5px !important;
-  border-color: var(--nb-border) !important;
+  border-width: var(--nb-border-width) !important;
+  border-color: var(--nb-color-border) !important;
 }
 
 .auth-card .mud-input:hover:not(.mud-disabled) .mud-input-outlined-border {
-  border-color: var(--nb-border-strong) !important;
+  border-color: var(--nb-color-border-strong) !important;
 }
 
 .auth-card .mud-input.mud-input-outlined.mud-input-underline:focus-within .mud-input-outlined-border,
 .auth-card .mud-input:focus-within .mud-input-outlined-border {
-  border-width: 2px !important;
-  border-color: var(--nb-primary) !important;
+  border-width: var(--nb-border-width-focus) !important;
+  border-color: var(--nb-color-border-focus) !important;
 }
 
 .auth-card .mud-input > input.mud-input-slot,
 .auth-card .mud-input > textarea.mud-input-slot,
 .auth-card .mud-input .mud-input-slot {
   font: var(--nb-font-body) !important;
-  color: var(--nb-text) !important;
-  min-height: var(--nb-input-height) !important;
-  height: var(--nb-input-height) !important;
-  padding: 0 14px !important;
+  color: var(--nb-color-text-primary) !important;
+  min-height: var(--nb-size-input-height) !important;
+  height: var(--nb-size-input-height) !important;
+  padding: 0 var(--nb-space-input-x) !important;
 }
 
 .auth-card .mud-input > input.mud-input-slot::placeholder {
-  color: var(--nb-placeholder) !important;
+  color: var(--nb-color-text-placeholder) !important;
   opacity: 1;
 }
 
 .auth-card .mud-input-adorned-end > input.mud-input-slot {
-  padding-right: 48px !important;
+  padding-right: var(--nb-size-input-pad-right-eye) !important;
 }
 
 .auth-card .mud-input-adornment {
@@ -278,12 +207,12 @@ html, body {
 }
 
 .auth-card .mud-icon-button {
-  color: var(--nb-text-muted) !important;
+  color: var(--nb-color-text-muted) !important;
 }
 
 /* Error state surface */
 .auth-card .mud-input-error .mud-input-outlined-border {
-  border-color: var(--nb-error) !important;
+  border-color: var(--nb-color-error) !important;
 }
 
 .auth-card .mud-input-error {
@@ -291,7 +220,7 @@ html, body {
 }
 
 .auth-card .mud-input-error .mud-input-slot {
-  background: var(--nb-error-bg);
+  background: var(--nb-color-error-bg);
 }
 
 /* ——— Forgot / footer links ——— */
@@ -303,12 +232,12 @@ html, body {
 
 .forgot-link {
   font: var(--nb-font-link) !important;
-  font-weight: 400 !important;
-  color: var(--nb-text-secondary) !important;
+  font-weight: var(--nb-font-weight-regular) !important;
+  color: var(--nb-color-text-secondary) !important;
 }
 
 .forgot-link:hover {
-  color: var(--nb-accent) !important;
+  color: var(--nb-color-accent) !important;
   text-decoration: none !important;
 }
 
@@ -320,99 +249,100 @@ html, body {
 }
 
 .auth-cta {
-  height: var(--nb-button-height) !important;
-  min-height: var(--nb-button-height) !important;
+  height: var(--nb-size-button-height) !important;
+  min-height: var(--nb-size-button-height) !important;
   border-radius: var(--nb-radius-button) !important;
   font: var(--nb-font-button) !important;
   text-transform: none !important;
-  box-shadow: 0 1px 2px rgba(47, 158, 122, 0.25) !important;
-  padding: 0 20px !important;
+  box-shadow: var(--nb-shadow-button-primary) !important;
+  padding: 0 var(--nb-space-button-x) !important;
 }
 
 .auth-cta.mud-button-filled:hover:not(:disabled) {
-  background: var(--nb-primary-hover) !important;
+  background: var(--nb-color-primary-hover) !important;
 }
 
 .auth-secondary-btn {
-  height: var(--nb-button-height) !important;
-  min-height: var(--nb-button-height) !important;
+  height: var(--nb-size-button-height) !important;
+  min-height: var(--nb-size-button-height) !important;
   border-radius: var(--nb-radius-button) !important;
-  font: 500 14px/1.25 var(--nb-font-family) !important;
+  font: var(--nb-font-button-secondary) !important;
   text-transform: none !important;
-  color: var(--nb-text-secondary) !important;
-  border-width: 1.5px !important;
-  border-color: var(--nb-border) !important;
+  color: var(--nb-color-text-secondary) !important;
+  border-width: var(--nb-border-width) !important;
+  border-color: var(--nb-color-border) !important;
 }
 
 .auth-footer {
   text-align: center;
-  margin-top: var(--nb-space-4);
+  margin-top: var(--nb-space-link-mt);
 }
 
 .auth-footer a,
 .auth-footer .mud-link {
   font: var(--nb-font-link) !important;
-  color: var(--nb-primary) !important;
-  font-weight: 500 !important;
+  color: var(--nb-color-primary) !important;
+  font-weight: var(--nb-font-weight-medium) !important;
 }
 
 .auth-footer.muted {
-  margin-top: var(--nb-space-3);
+  margin-top: var(--nb-space-link-muted-mt);
 }
 
 .auth-footer.muted a,
 .auth-footer.muted .mud-link {
-  font-weight: 400 !important;
-  color: var(--nb-text-secondary) !important;
+  font-weight: var(--nb-font-weight-regular) !important;
+  color: var(--nb-color-text-secondary) !important;
 }
 
 .auth-footer.muted a:hover,
 .auth-footer.muted .mud-link:hover {
-  color: var(--nb-primary) !important;
+  color: var(--nb-color-primary) !important;
 }
 
 /* ——— Terms ——— */
 .terms-row {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: var(--nb-space-terms-gap);
   margin: var(--nb-space-5) 0 var(--nb-space-2);
 }
 
 .terms-check {
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 2px; /* optical align with 13px terms text — QA-locked */
   line-height: 0;
 }
 
 .terms-check input[type="checkbox"] {
   appearance: none;
   -webkit-appearance: none;
-  width: var(--nb-checkbox-size);
-  height: var(--nb-checkbox-size);
+  width: var(--nb-size-checkbox);
+  height: var(--nb-size-checkbox);
   margin: 0;
-  border: 1.5px solid var(--nb-border-strong);
+  border: var(--nb-border-width) solid var(--nb-color-border-strong);
   border-radius: var(--nb-radius-checkbox);
-  background: var(--nb-surface);
+  background: var(--nb-color-surface);
   cursor: pointer;
   position: relative;
-  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+  transition: border-color var(--nb-motion-fast), background var(--nb-motion-fast), box-shadow var(--nb-motion-fast);
 }
 
 .terms-check input[type="checkbox"]:checked {
-  background: var(--nb-primary);
-  border-color: var(--nb-primary);
+  background: var(--nb-color-primary);
+  border-color: var(--nb-color-primary);
 }
 
 .terms-check input[type="checkbox"]:checked::after {
   content: "";
   position: absolute;
+  /* checkmark geometry for 20×20 box — not elevated to DS */
   left: 5px;
   top: 1px;
   width: 5px;
   height: 10px;
-  border: solid #fff;
-  border-width: 0 2px 2px 0;
+  border: solid var(--nb-color-text-on-primary);
+  border-width: 0 var(--nb-border-width-focus) var(--nb-border-width-focus) 0;
   transform: rotate(45deg);
 }
 
@@ -422,54 +352,54 @@ html, body {
 }
 
 .terms-row.is-error .terms-check input[type="checkbox"] {
-  border-color: var(--nb-error);
+  border-color: var(--nb-color-error);
 }
 
 .terms-text {
-  font: 400 13px/1.5 var(--nb-font-family);
-  color: var(--nb-text-secondary);
+  font: var(--nb-font-terms);
+  color: var(--nb-color-text-secondary);
 }
 
 .terms-text a {
-  color: var(--nb-primary);
-  font-weight: 500;
+  color: var(--nb-color-primary);
+  font-weight: var(--nb-font-weight-medium);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .terms-error {
   font: var(--nb-font-helper);
-  color: var(--nb-error);
+  color: var(--nb-color-error);
   margin: 0 0 var(--nb-space-2);
 }
 
 /* ——— OTP cells ——— */
 .otp-field {
-  margin-bottom: var(--nb-field-gap);
+  margin-bottom: var(--nb-space-field-gap);
 }
 
 .otp-row {
   display: flex;
-  gap: var(--nb-otp-cell-gap);
+  gap: var(--nb-size-otp-gap);
   justify-content: center;
   margin: var(--nb-space-1) 0 var(--nb-space-2);
 }
 
 .otp-cell {
-  width: var(--nb-otp-cell-size);
-  height: var(--nb-otp-cell-size);
-  border: 1.5px solid var(--nb-border);
+  width: var(--nb-size-otp-cell);
+  height: var(--nb-size-otp-cell);
+  border: var(--nb-border-width) solid var(--nb-color-border);
   border-radius: var(--nb-radius-otp);
-  background: var(--nb-surface);
+  background: var(--nb-color-surface);
   text-align: center;
   font: var(--nb-font-otp);
   font-family: var(--nb-font-family);
-  color: var(--nb-text);
+  color: var(--nb-color-text-primary);
   outline: none;
-  caret-color: var(--nb-primary);
+  caret-color: var(--nb-color-primary);
   appearance: none;
   -moz-appearance: textfield;
-  transition: border-color 120ms ease, box-shadow 120ms ease, background 120ms ease;
+  transition: border-color var(--nb-motion-fast), box-shadow var(--nb-motion-fast), background var(--nb-motion-fast);
 }
 
 .otp-cell::-webkit-outer-spin-button,
@@ -479,46 +409,47 @@ html, body {
 }
 
 .otp-cell:hover:not(:disabled) {
-  border-color: var(--nb-border-strong);
+  border-color: var(--nb-color-border-strong);
 }
 
 .otp-cell:focus {
-  border-color: var(--nb-primary);
-  border-width: 2px;
+  border-color: var(--nb-color-primary);
+  border-width: var(--nb-border-width-focus);
   box-shadow: var(--nb-shadow-focus);
 }
 
 .otp-cell.is-filled {
+  /* soft filled border — no DS token yet; keep QA hex */
   border-color: #B8E0D0;
-  background: var(--nb-primary-muted);
+  background: var(--nb-color-primary-muted);
 }
 
 .otp-cell.is-error {
-  border-color: var(--nb-error);
-  background: var(--nb-error-bg);
+  border-color: var(--nb-color-error);
+  background: var(--nb-color-error-bg);
 }
 
 .otp-helper {
   font: var(--nb-font-helper);
-  color: var(--nb-text-muted);
-  margin-top: 6px;
+  color: var(--nb-color-text-muted);
+  margin-top: var(--nb-space-helper-gap);
   text-align: left;
 }
 
 .otp-error {
   font: var(--nb-font-helper);
-  color: var(--nb-error);
-  margin-top: 6px;
+  color: var(--nb-color-error);
+  margin-top: var(--nb-space-helper-gap);
 }
 
 /* ——— App shell (post-login) ——— */
 .main-bg {
-  background: var(--nb-bg);
-  min-height: calc(100vh - 64px);
+  background: var(--nb-color-bg);
+  min-height: calc(100vh - 64px); /* MudBlazor default AppbarHeight */
 }
 
 .home-card {
-  max-width: 480px;
+  max-width: 480px; /* post-login shell; not auth card width */
   margin: var(--nb-space-6) auto;
   border-radius: var(--nb-radius-card);
 }
