@@ -1,5 +1,6 @@
 using Arahk.Neighbor.Application;
 using Arahk.Neighbor.Infrastructure.DependencyInjection;
+using Arahk.Neighbor.Infrastructure.Dev;
 using Arahk.Neighbor.Web.Components;
 using Arahk.Neighbor.Web.Services;
 using MudBlazor.Services;
@@ -29,5 +30,8 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+// Development-only verified demo user — never runs in Production.
+await DevUserSeeder.SeedIfDevelopmentAsync(app.Services, app.Environment);
 
 app.Run();
