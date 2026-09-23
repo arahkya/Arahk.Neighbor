@@ -68,6 +68,7 @@
   --nb-button-height: 48px;
   --nb-otp-cell-size: 48px;
   --nb-otp-cell-gap: 8px;
+  --nb-checkbox-size: 20px;
   --nb-toggle-height: 44px;
   --nb-card-width-mobile: 390px;
   --nb-card-width-desktop: 420px;
@@ -376,6 +377,52 @@ html, body {
   align-items: flex-start;
   gap: 10px;
   margin: var(--nb-space-5) 0 var(--nb-space-2);
+}
+
+.terms-check {
+  flex-shrink: 0;
+  margin-top: 2px;
+  line-height: 0;
+}
+
+.terms-check input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: var(--nb-checkbox-size);
+  height: var(--nb-checkbox-size);
+  margin: 0;
+  border: 1.5px solid var(--nb-border-strong);
+  border-radius: var(--nb-radius-checkbox);
+  background: var(--nb-surface);
+  cursor: pointer;
+  position: relative;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.terms-check input[type="checkbox"]:checked {
+  background: var(--nb-primary);
+  border-color: var(--nb-primary);
+}
+
+.terms-check input[type="checkbox"]:checked::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.terms-check input[type="checkbox"]:focus-visible {
+  outline: none;
+  box-shadow: var(--nb-shadow-focus);
+}
+
+.terms-row.is-error .terms-check input[type="checkbox"] {
+  border-color: var(--nb-error);
 }
 
 .terms-text {

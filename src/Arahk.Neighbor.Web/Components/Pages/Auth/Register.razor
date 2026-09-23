@@ -73,8 +73,10 @@
                   Margin="Margin.None" />
 </div>
 
-<div class="terms-row">
-    <MudCheckBox @bind-Value="_terms" Color="Color.Primary" Dense="true" />
+<div class="@($"terms-row{(!string.IsNullOrEmpty(_termsErr) ? " is-error" : string.Empty)}")">
+    <label class="terms-check">
+        <input type="checkbox" @bind="_terms" />
+    </label>
     <span class="terms-text">
         @ThaiCopy.T("register.terms.prefix")
         <a href="#" @onclick:preventDefault>@ThaiCopy.T("register.terms.tos")</a>
