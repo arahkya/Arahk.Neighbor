@@ -210,7 +210,7 @@
   --nb-size-mobile-frame: 390px;
   --nb-size-tip-border: 3px;
 
-  --nb-space-appbar-x: 8px;   /* narrower than --nb-space-nav-item-x (14px); live feedback */
+  --nb-space-appbar-x: 12px;   /* narrower than --nb-space-nav-item-x (14px); live feedback */
   --nb-space-drawer-x: 12px;
   --nb-space-drawer-y: 16px;
   --nb-space-nav-item-y: 12px;
