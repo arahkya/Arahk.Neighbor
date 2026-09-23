@@ -3,8 +3,8 @@
  * Colors / type / radii: wwwroot/nb-tokens.css (--nb-color-* / --nb-font-* / --nb-radius-*).
  * Spacing & control heights: MudBlazor 9 (pa-/px-/gap-* utilities + Size enum) — see
  * neighbor-design-system/01-spacing-sizing.md + mud-spacing-size-mapping.md.
- * Chrome: AppBar height Mud default 64; pad-x 12 (px-3) < nav pad-x 16 (px-4);
- * main clears Fixed AppBar via Mud. No forced 48px control heights.
+ * Chrome lock: AppBar height Mud default 64; pad-x 16 (px-4) < nav pad-x 20 (px-5);
+ * main clears Fixed AppBar via Mud. No forced 48px control heights / --nb-space|--nb-size heights.
  */
 
 html, body {
@@ -458,18 +458,21 @@ html, body {
   color: var(--nb-color-text-primary) !important;
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none !important;
-  /* Horizontal inset on toolbar (Mud px-3 = 12px); avoid double pad with gutters */
+  /* Horizontal inset on toolbar (Mud px-4 = 16px); avoid double pad with gutters */
   padding-left: 0 !important;
   padding-right: 0 !important;
+  overflow: visible !important;
+  z-index: 1200; /* above drawer content; account MudMenu popover */
 }
 
-/* Vertical center wordmark; AppBar pad-x 12 (Mud px-3) < nav pad-x 16 (Mud px-4) */
+/* Vertical center wordmark; AppBar pad-x 16 (Mud px-4) < nav pad-x 20 (Mud px-5) */
 .nb-appbar .mud-toolbar,
 .nb-appbar .mud-toolbar-appbar {
   display: flex !important;
   align-items: center !important;
-  padding-left: 12px !important; /* Mud px-3 */
-  padding-right: 12px !important;
+  padding-left: 16px !important; /* Mud px-4 — chrome lock AppBar < nav */
+  padding-right: 16px !important;
+  overflow: visible !important; /* account menu popover must not clip */
 }
 
 .nb-appbar-menu {
@@ -537,7 +540,7 @@ html, body {
 
 .nb-nav-link.mud-nav-link {
   margin-bottom: 4px;
-  padding: 12px 16px !important; /* Mud py-3 px-4; nav-x snapped 14→16 */
+  padding: 12px 20px !important; /* Mud py-3 px-5; chrome lock nav 20 > AppBar 16 */
   border-radius: var(--nb-radius-toggle-item) !important;
   font: var(--nb-font-body) !important;
   font-weight: var(--nb-font-weight-medium) !important;
@@ -572,10 +575,10 @@ html, body {
 .nb-main {
   background: var(--nb-color-bg) !important;
   min-height: 100vh;
-  /* Mud px-5 / pb-10 */
-  padding-right: 20px !important;
+  /* Mud px-6 / pb-10 — loosen side pad vs prior px-5 */
+  padding-right: 24px !important;
   padding-bottom: 40px !important;
-  padding-left: 20px !important;
+  padding-left: 24px !important;
 }
 
 @media (min-width: 960px) {
@@ -671,7 +674,7 @@ html, body {
 
 .nb-welcome-tip {
   margin: 0;
-  padding: 12px;
+  padding: 16px; /* Mud pa-4 — was cramped at 12 */
   font: var(--nb-font-helper);
   font-size: var(--nb-font-size-label);
   color: var(--nb-color-text-muted);
@@ -733,14 +736,14 @@ html, body {
 }
 
 .nb-master-title {
-  margin: 0 0 4px;
+  margin: 0 0 8px; /* title↔subtitle ≥8 (was 4) */
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-wordmark);
   color: var(--nb-color-text-primary);
 }
 
 .nb-master-subtitle {
-  margin: 0 0 20px;
+  margin: 0 0 24px;
   font: var(--nb-font-body);
   color: var(--nb-color-text-secondary);
 }
@@ -754,7 +757,7 @@ html, body {
 }
 
 .nb-master-tabs {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 .nb-master-tabs .mud-tabs-toolbar {
@@ -782,7 +785,7 @@ html, body {
 }
 
 .nb-master-tab-panel {
-  padding-top: 16px;
+  padding-top: 20px;
 }
 
 .nb-houses-header {
@@ -791,7 +794,8 @@ html, body {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  padding: 4px 0; /* breathe vs edges / tabs */
 }
 
 .nb-houses-title {
@@ -1163,7 +1167,7 @@ html, body {
   background: var(--nb-color-surface);
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
   border-radius: var(--nb-radius-card);
-  padding: 16px;
+  padding: 20px; /* was 16 — card padding */
 }
 
 .nb-roles-master-heading {
@@ -1180,7 +1184,9 @@ html, body {
 
 .nb-roles-list-item {
   border-radius: var(--nb-radius-input) !important;
-  margin-bottom: 4px !important;
+  margin-bottom: 8px !important; /* was 4 — mobile list breathing room */
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
 }
 
 .nb-roles-list-item.is-selected {
@@ -1343,6 +1349,19 @@ html, body {
 }
 
 /* ——— My Profile (phase A) ——— */
+.nb-appbar-avatar-btn.mud-button-root,
+.nb-appbar-avatar-btn {
+  min-width: 0 !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  line-height: 0 !important;
+  color: inherit !important;
+}
+
+.nb-appbar-avatar-btn:hover {
+  background: transparent !important;
+}
+
 .nb-appbar-avatar {
   cursor: pointer;
   width: 36px !important;
@@ -1352,10 +1371,15 @@ html, body {
   background: var(--nb-color-primary-muted) !important;
   color: var(--nb-color-primary) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-primary) !important;
+  pointer-events: none; /* clicks go to MudButton → context.ToggleAsync */
 }
 
 .nb-account-menu .mud-menu-list {
   min-width: 200px;
+}
+
+.nb-account-menu {
+  z-index: 1300;
 }
 
 .nb-account-menu-divider {
@@ -1373,7 +1397,7 @@ html, body {
 .nb-drawer-section {
   font: var(--nb-font-helper);
   color: var(--nb-color-text-muted);
-  padding: 8px 16px;
+  padding: 8px 20px; /* align with nav pad-x 20 */
   margin-bottom: 4px;
   text-transform: none;
   letter-spacing: 0;

@@ -4,7 +4,7 @@
  * CANONICAL (SoT): colors · typography · radii · borders · shadows · motion · overlay/z
  * DEPRECATED (not SoT): --nb-space-* · --nb-size-* — MudBlazor 9 utilities + Size enum
  *   → 01-spacing-sizing.md · mud-spacing-size-mapping.md (DS package)
- *   → App: MudBlazor 9.10.0 · AppBar height prefer Mud 64 (not Dense/56)
+ *   → App: MudBlazor 9.10.0 · AppBar height Mud 64; chrome pad AppBar 16 (px-4) < nav 20 (px-5)
  * Palette: Primary #2F9E7A · BG #F7F3EB · Accent #E8A25B · Wordmark Neighbor
  * Updated: 23 Sep 2026 ICT — MudBlazor 9 Size/Spacing alignment
  */
@@ -150,7 +150,7 @@
    * @deprecated — NOT source of truth. New UI MUST NOT use these.
    * Spacing → Mud pa/ma/gap/MudStack (N×4px). Size → Size.Small|Medium|Large.
    * Off-grid snaps: 6→8, 3→4, 14→16, terms 10→8, toast-x 18→16.
-   * Chrome: AppBar px-3=12, nav px-4=16, AppBar height 64 (Mud default).
+   * Chrome lock: AppBar px-4=16 < nav px-5=20; AppBar height 64 (Mud default).
    * ================================================================== */
 
   /* @deprecated scale — prefer Mud *-N */

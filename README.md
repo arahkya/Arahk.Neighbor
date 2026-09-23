@@ -33,3 +33,10 @@ Then open the printed URL (typically `http://localhost:5xxx`).
 - Email: `InMemoryEmailSender` — OTP code shown on verify page in development.
 - Forgot password: placeholder toast only.
 - Local DB files (`*.db`, `*.db-shm`, `*.db-wal`) are gitignored.
+
+## UI chrome lock (AppBar vs nav)
+- **AppBar** pad-x **16** (`px-4`) — height Mud default **64** (not Dense/56)
+- **Nav item** pad-x **20** (`px-5`) — intentionally wider than AppBar
+- Desktop wordmark: AppBar only (no drawer duplicate)
+- Main content clears Fixed AppBar via Mud (`--mud-appbar-height`)
+- Spacing/heights: MudBlazor 9 `N×4` utilities + `Size` enum — do not revive `--nb-space-*` / `--nb-size-*-height` as SoT
