@@ -195,5 +195,36 @@
   --nb-color-spinner-track: rgba(255, 255, 255, 0.35);
 
   /* Wordmark tracking */
+  /* Wordmark tracking */
   --nb-letter-spacing-wordmark: 0.01em;
+
+  /* ========== App Layout (Home shell — from neighbor-home-ui) ========== */
+  --nb-size-appbar-height: 56px;
+  --nb-size-drawer-width: 272px;
+  --nb-size-menu-btn: 40px;
+  --nb-size-signout-height: 40px;
+  --nb-size-main-max: 720px;
+  --nb-size-illustration-h-mobile: 200px;
+  --nb-size-illustration-h-desktop: 280px;
+  --nb-size-alert-icon: 24px;
+  --nb-size-mobile-frame: 390px;
+  --nb-size-tip-border: 3px;
+
+  --nb-space-appbar-x: 16px;
+  --nb-space-drawer-x: 12px;
+  --nb-space-drawer-y: 16px;
+  --nb-space-nav-item-y: 12px;
+  --nb-space-nav-item-x: 14px;
+  --nb-space-main-mobile: 20px;
+  --nb-space-main-desktop-x: 40px;
+  --nb-space-main-desktop-y: 32px;
+  --nb-space-welcome-y: 28px;
+  --nb-space-welcome-x: 24px;
+
+  --nb-color-overlay: rgba(26, 26, 26, 0.4);
+  --nb-shadow-drawer: 4px 0 24px rgba(26, 26, 26, 0.12);
+  --nb-z-appbar: 20;
+  --nb-z-overlay: 30;
+  --nb-z-drawer: 40;
+  --nb-z-frame-label: 100;
 }

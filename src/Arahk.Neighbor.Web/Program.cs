@@ -13,6 +13,7 @@ builder.Services.AddMudServices();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure();
 builder.Services.AddScoped<AuthSessionState>();
+builder.Services.AddScoped<AppShellState>();
 
 var app = builder.Build();
 

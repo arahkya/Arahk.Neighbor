@@ -1,0 +1,213 @@
+@inherits LayoutComponentBase
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+@using Arahk.Neighbor.Web.Theme
+@using MudBlazor.Services
+@inject AuthSessionState Session
+@inject AppShellState Shell
+@inject NavigationManager Nav
+@inject IBrowserViewportService BrowserViewport
+
+<MudThemeProvider Theme="_theme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout Class="nb-app-layout">
+    <MudAppBar Elevation="0" Dense="true" Class="nb-appbar" Fixed="true">
+        @if (_isBelowMd)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                           Color="Color.Inherit"
+                           Edge="Edge.Start"
+                           Class="nb-appbar-menu"
+                           aria-label="@ThaiCopy.T("layout.nav.menu_toggle_aria")"
+                           OnClick="ToggleDrawer" />
+        }
+        <MudText Typo="Typo.h6" Class="nb-appbar-wordmark">@ThaiCopy.T("app.wordmark")</MudText>
+        <MudSpacer />
+        @if (!_isBelowMd && Session.IsAuthenticated)
+        {
+            <MudButton Variant="Variant.Outlined"
+                       Class="nb-signout-btn"
+                       OnClick="SignOut">
+                @ThaiCopy.T("layout.sign_out")
+            </MudButton>
+        }
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen"
+               Variant="DrawerVariant.Responsive"
+               ClipMode="@DrawerClip"
+               Breakpoint="Breakpoint.Md"
+               Elevation="@(_isBelowMd ? 2 : 0)"
+               Width="var(--nb-size-drawer-width)"
+               Class="nb-drawer"
+               Overlay="true"
+               OverlayAutoClose="true">
+        <MudDrawerHeader Class="nb-drawer-header">
+            <div>
+                <MudText Class="nb-drawer-wordmark">@ThaiCopy.T("app.wordmark")</MudText>
+                <MudText Class="nb-drawer-tagline">@ThaiCopy.T("app.tagline")</MudText>
+            </div>
+        </MudDrawerHeader>
+
+        <MudNavMenu Class="nb-nav-menu" aria-label="@ThaiCopy.T("a11y.main_nav")">
+            <MudNavLink Href="/"
+                        Match="NavLinkMatch.All"
+                        Class="nb-nav-link"
+                        OnClick="OnHomeNav">
+                @ThaiCopy.T("nav.home")
+            </MudNavLink>
+            <MudNavLink Class="nb-nav-link"
+                        OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.payment")))">
+                @ThaiCopy.T("nav.payment")
+            </MudNavLink>
+            <MudNavLink Class="nb-nav-link"
+                        OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.packages")))">
+                @ThaiCopy.T("nav.packages")
+            </MudNavLink>
+            <MudNavLink Class="nb-nav-link"
+                        OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.visitor")))">
+                @ThaiCopy.T("nav.visitor")
+            </MudNavLink>
+            <MudNavLink Class="nb-nav-link"
+                        OnClick="@(() => OnComingSoon(ThaiCopy.T("nav.master_data")))">
+                @ThaiCopy.T("nav.master_data")
+            </MudNavLink>
+        </MudNavMenu>
+
+        @if (_isBelowMd && Session.IsAuthenticated)
+        {
+            <div class="nb-drawer-footer">
+                <MudButton Variant="Variant.Outlined"
+                           FullWidth="true"
+                           Class="nb-signout-btn"
+                           OnClick="SignOut">
+                    @ThaiCopy.T("layout.sign_out")
+                </MudButton>
+            </div>
+        }
+    </MudDrawer>
+
+    <MudMainContent Class="nb-main">
+        <div class="nb-main-inner">
+            @if (Shell.HasSoftSoon)
+            {
+                <div role="status">
+                    <MudAlert Severity="Severity.Info"
+                              Variant="Variant.Outlined"
+                              Class="nb-alert-soon">
+                        <div class="nb-alert-soon-body">
+                            <strong class="nb-alert-soon-title">@ThaiCopy.T("soon.title")</strong>
+                            <p class="nb-alert-soon-text">
+                                @ThaiCopy.Format("soon.body_named", ("navLabel", Shell.SoftSoonNavLabel!))
+                                — @ThaiCopy.T("soon.body_reassure")
+                            </p>
+                            <MudButton Variant="Variant.Text"
+                                       Color="Color.Primary"
+                                       Class="nb-alert-soon-cta"
+                                       OnClick="ClearSoftSoon">
+                                @ThaiCopy.T("soon.cta_home")
+                            </MudButton>
+                        </div>
+                    </MudAlert>
+                </div>
+            }
+            @Body
+        </div>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private readonly MudTheme _theme = NeighborTheme.Create();
+    private bool _drawerOpen;
+    private bool _isBelowMd = true;
+    private Guid _observerId = Guid.NewGuid();
+
+    private DrawerClipMode DrawerClip =>
+        _isBelowMd ? DrawerClipMode.Never : DrawerClipMode.Docked;
+
+    Guid IBrowserViewportObserver.Id => _observerId;
+
+    ResizeOptions? IBrowserViewportObserver.ResizeOptions => null;
+
+    protected override void OnInitialized()
+    {
+        Shell.Changed += OnShellChanged;
+        Session.Changed += OnSessionChanged;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await BrowserViewport.SubscribeAsync(this, fireImmediately: true);
+    }
+
+    async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs args)
+    {
+        // Temporary &lt; md · Persistent ≥ md
+        var belowMd = !await BrowserViewport.IsBreakpointWithinWindowSizeAsync(Breakpoint.MdAndUp);
+        ApplyBelowMd(belowMd);
+        await InvokeAsync(StateHasChanged);
+    }
+
+    private void ApplyBelowMd(bool belowMd)
+    {
+        var wasBelow = _isBelowMd;
+        _isBelowMd = belowMd;
+
+        if (!_isBelowMd)
+            _drawerOpen = true;
+        else if (!wasBelow)
+            _drawerOpen = false;
+    }
+
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+
+    private void OnHomeNav()
+    {
+        Shell.ClearComingSoon();
+        CloseDrawerIfMobile();
+    }
+
+    private void OnComingSoon(string navLabel)
+    {
+        Shell.ShowComingSoon(navLabel);
+        CloseDrawerIfMobile();
+    }
+
+    private void ClearSoftSoon() => Shell.ClearComingSoon();
+
+    private void CloseDrawerIfMobile()
+    {
+        if (_isBelowMd)
+            _drawerOpen = false;
+    }
+
+    private void SignOut()
+    {
+        Session.SignOut();
+        Shell.ClearComingSoon();
+        Nav.NavigateTo("/login");
+    }
+
+    private void OnShellChanged() => InvokeAsync(StateHasChanged);
+    private void OnSessionChanged() => InvokeAsync(StateHasChanged);
+
+    public async ValueTask DisposeAsync()
+    {
+        Shell.Changed -= OnShellChanged;
+        Session.Changed -= OnSessionChanged;
+        try
+        {
+            await BrowserViewport.UnsubscribeAsync(this);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+}

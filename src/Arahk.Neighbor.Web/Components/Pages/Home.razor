@@ -1,22 +1,30 @@
 @page "/"
+@layout AppLayout
 @rendermode InteractiveServer
 @inject AuthSessionState Session
 @inject NavigationManager Nav
 
 @if (!Session.IsAuthenticated)
 {
-    <p>@ThaiCopy.T("state.loading")</p>
+    <p class="nb-loading">@ThaiCopy.T("state.loading")</p>
 }
 else
 {
-    <MudPaper Class="pa-6 home-card" Elevation="2">
-        <MudText Typo="Typo.h5">@ThaiCopy.T("home.welcome")</MudText>
-        <MudText Class="mt-2">@ThaiCopy.T("home.signed_in_as") <strong>@Session.DisplayName</strong></MudText>
-        <MudText Typo="Typo.caption" Class="mt-1">@Session.Email</MudText>
-        <MudButton Class="mt-4" Variant="Variant.Outlined" Color="Color.Primary" OnClick="Logout">
-            @ThaiCopy.T("home.logout")
-        </MudButton>
-    </MudPaper>
+    <section class="nb-welcome" aria-labelledby="welcome-title">
+        <MudText Typo="Typo.h5" Class="nb-welcome-title" id="welcome-title">
+            @ThaiCopy.T("home.welcome.headline")
+        </MudText>
+        <MudText Class="nb-welcome-body">
+            @ThaiCopy.T("home.welcome.body")
+        </MudText>
+        <img class="nb-welcome-illustration"
+             src="images/home-welcome.png"
+             alt="@ThaiCopy.T("home.welcome.illustration_alt")"
+             width="960"
+             height="540" />
+        <p class="nb-welcome-tip nb-welcome-tip--desktop">@ThaiCopy.T("home.welcome.tip")</p>
+        <p class="nb-welcome-tip nb-welcome-tip--mobile">@ThaiCopy.T("home.welcome.tip_mobile")</p>
+    </section>
 }
 
 @code {
@@ -24,11 +32,5 @@ else
     {
         if (!Session.IsAuthenticated)
             Nav.NavigateTo("/login");
-    }
-
-    private void Logout()
-    {
-        Session.SignOut();
-        Nav.NavigateTo("/login");
     }
 }

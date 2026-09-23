@@ -98,6 +98,31 @@ public static class ThaiCopy
         ["home.signed_in_as"] = "เข้าสู่ระบบแล้วในชื่อ",
         ["home.logout"] = "ออกจากระบบ",
         ["dev.otp_hint"] = "รหัส OTP (โหมดพัฒนา)",
+
+        // Layout / App shell (Home UX 03-copy-th.md)
+        ["layout.nav.menu_toggle_aria"] = "เปิดหรือปิดเมนู",
+        ["layout.sign_out"] = "ออกจากระบบ",
+        ["layout.drawer.close_aria"] = "ปิดเมนูนำทาง",
+        ["a11y.main_nav"] = "เมนูหลัก",
+        ["a11y.current_page"] = "หน้าปัจจุบัน",
+
+        ["nav.home"] = "หน้าหลัก",
+        ["nav.payment"] = "การชำระเงิน",
+        ["nav.packages"] = "แพ็กเกจ",
+        ["nav.visitor"] = "ผู้มาเยือน",
+        ["nav.master_data"] = "ข้อมูลหลัก",
+
+        ["home.welcome.headline"] = "ยินดีต้อนรับกลับบ้าน",
+        ["home.welcome.body"] = "Neighbor พร้อมดูแลเรื่องบ้านและเพื่อนบ้านของคุณ — เริ่มจากที่นี่ได้เลย",
+        ["home.welcome.tip"] = "ใช้เมนูด้านข้างเพื่อไปยังบริการต่างๆ ของชุมชน",
+        ["home.welcome.tip_mobile"] = "แตะไอคอนเมนูด้านบนเพื่อเปิดรายการบริการ",
+        ["home.welcome.illustration_alt"] = "ภาพประกอบบ้านและครอบครัวอบอุ่น",
+
+        ["soon.title"] = "เร็วๆ นี้",
+        ["soon.body_generic"] = "ส่วนนี้ยังไม่พร้อมใช้งาน ขอขอบคุณที่แวะมา",
+        ["soon.body_named"] = "เมนู「{navLabel}」ยังไม่พร้อมใช้งานในตอนนี้",
+        ["soon.body_reassure"] = "คุณยังดูหน้าหลักได้ตามสบาย — เราจะแจ้งเมื่อพร้อม",
+        ["soon.cta_home"] = "ไปหน้าหลัก",
     };
 
     public static string T(string key) => Map.TryGetValue(key, out var v) ? v : key;
