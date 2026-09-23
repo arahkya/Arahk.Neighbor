@@ -77,8 +77,10 @@ html, body {
 
 /* App shell AppBar wordmark (surface bar — primary ink) */
 .nb-appbar-wordmark {
+  margin: 0 !important;
   font: var(--nb-font-wordmark) !important;
   font-size: var(--nb-font-size-title) !important;
+  line-height: 1 !important;
   color: var(--nb-color-primary) !important;
   letter-spacing: var(--nb-letter-spacing-wordmark);
 }
@@ -460,12 +462,27 @@ html, body {
 .nb-appbar {
   height: var(--nb-size-appbar-height) !important;
   min-height: var(--nb-size-appbar-height) !important;
+  /* Keep Mud fixed-appbar offset math aligned with our 56px token */
+  --mud-appbar-height: var(--nb-size-appbar-height);
   background: var(--nb-color-surface) !important;
   color: var(--nb-color-text-primary) !important;
   border-bottom: var(--nb-border-width-hairline) solid var(--nb-color-border);
   box-shadow: none !important;
-  padding-left: var(--nb-space-appbar-x);
-  padding-right: var(--nb-space-appbar-x);
+  /* Horizontal inset lives on the toolbar (override Mud gutters); avoid double pad */
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+/* Vertical center wordmark + Sign out; AppBar pad < nav-item pad */
+.nb-appbar .mud-toolbar,
+.nb-appbar .mud-toolbar-appbar {
+  height: var(--nb-size-appbar-height) !important;
+  min-height: var(--nb-size-appbar-height) !important;
+  --mud-internal-toolbar-height: var(--nb-size-appbar-height);
+  display: flex !important;
+  align-items: center !important;
+  padding-left: var(--nb-space-appbar-x) !important;
+  padding-right: var(--nb-space-appbar-x) !important;
 }
 
 .nb-appbar-menu {
@@ -566,15 +583,24 @@ html, body {
   background: var(--nb-color-overlay) !important;
 }
 
+/* Fixed AppBar: pad-top must clear bar (Mud default was overridden by shorthand padding) */
+.nb-main.mud-main-content,
 .nb-main {
   background: var(--nb-color-bg) !important;
   min-height: calc(100vh - var(--nb-size-appbar-height));
-  padding: var(--nb-space-6) var(--nb-space-main-mobile) var(--nb-space-10) !important;
+  padding-top: calc(var(--nb-size-appbar-height) + var(--nb-space-6)) !important;
+  padding-right: var(--nb-space-main-mobile) !important;
+  padding-bottom: var(--nb-space-10) !important;
+  padding-left: var(--nb-space-main-mobile) !important;
 }
 
 @media (min-width: 960px) {
+  .nb-main.mud-main-content,
   .nb-main {
-    padding: var(--nb-space-main-desktop-y) var(--nb-space-main-desktop-x) var(--nb-space-12) !important;
+    padding-top: calc(var(--nb-size-appbar-height) + var(--nb-space-main-desktop-y)) !important;
+    padding-right: var(--nb-space-main-desktop-x) !important;
+    padding-bottom: var(--nb-space-12) !important;
+    padding-left: var(--nb-space-main-desktop-x) !important;
   }
 }
 

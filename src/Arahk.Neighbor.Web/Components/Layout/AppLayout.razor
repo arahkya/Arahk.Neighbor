@@ -45,12 +45,16 @@
                Class="nb-drawer"
                Overlay="true"
                OverlayAutoClose="true">
-        <MudDrawerHeader Class="nb-drawer-header">
-            <div>
-                <MudText Class="nb-drawer-wordmark">@ThaiCopy.T("app.wordmark")</MudText>
-                <MudText Class="nb-drawer-tagline">@ThaiCopy.T("app.tagline")</MudText>
-            </div>
-        </MudDrawerHeader>
+        @* Desktop Persistent: wordmark only in Top Bar (no duplicate). Mobile Temporary may keep branding. *@
+        @if (_isBelowMd)
+        {
+            <MudDrawerHeader Class="nb-drawer-header">
+                <div>
+                    <MudText Class="nb-drawer-wordmark">@ThaiCopy.T("app.wordmark")</MudText>
+                    <MudText Class="nb-drawer-tagline">@ThaiCopy.T("app.tagline")</MudText>
+                </div>
+            </MudDrawerHeader>
+        }
 
         <MudNavMenu Class="nb-nav-menu" aria-label="@ThaiCopy.T("a11y.main_nav")">
             <MudNavLink Href="/"
