@@ -8,7 +8,7 @@ using Microsoft.Extensions.Hosting;
 namespace Arahk.Neighbor.Infrastructure.Dev;
 
 /// <summary>
-/// Idempotent Development / in-memory seed for 5 roles + permission catalog + defaults.
+/// Idempotent Development seed for 5 roles + permission catalog + defaults.
 /// </summary>
 public static class DevRolePermissionSeeder
 {
@@ -21,9 +21,10 @@ public static class DevRolePermissionSeeder
         if (!environment.IsDevelopment())
             return false;
 
-        var masters = services.GetRequiredService<IPermissionMasterRepository>();
-        var grants = services.GetRequiredService<IRolePermissionRepository>();
-        var clock = services.GetRequiredService<IClock>();
+        await using var scope = services.CreateAsyncScope();
+        var masters = scope.ServiceProvider.GetRequiredService<IPermissionMasterRepository>();
+        var grants = scope.ServiceProvider.GetRequiredService<IRolePermissionRepository>();
+        var clock = scope.ServiceProvider.GetRequiredService<IClock>();
         return await EnsureSeedAsync(
             masters,
             grants,

@@ -3,7 +3,7 @@
 Clean Architecture + Blazor Server + MudBlazor. Thai UI copy from approved UX package.
 
 ## Prerequisites
-- .NET 8 SDK
+- .NET 10 SDK (`global.json` pins `10.0.401`)
 
 ## Run
 ```bash
@@ -19,8 +19,17 @@ Then open the printed URL (typically `http://localhost:5xxx`).
 - Register: `/register`
 - Email OTP: `/verify-email` (after register)
 - Home (after verify/login): `/`
+- My Profile: `/profile` (signed-in)
+
+## Persistence (phase A)
+- **EF Core + SQLite** behind Application repository interfaces.
+- Connection string: `ConnectionStrings:Neighbor` in `appsettings.json` / `appsettings.Development.json`.
+- Default: `Data Source=neighbor.db` — file is created under the Web project **content root** (same folder as `appsettings.json` when running `dotnet run --project src/Arahk.Neighbor.Web`).
+- Schema: `EnsureCreated` on startup (phase A). Migrations can replace this later without changing repository contracts.
+- Dev seed (Development only): verified demo user + permission masters/role defaults when rows are missing (never overwrites existing data).
+- Auth session (`AuthSessionState`) stays in-memory scoped — restart clears the signed-in cookie/session UI state, not DB rows.
 
 ## Notes
-- Persistence: in-memory (demo). Restart clears users.
 - Email: `InMemoryEmailSender` — OTP code shown on verify page in development.
 - Forgot password: placeholder toast only.
+- Local DB files (`*.db`, `*.db-shm`, `*.db-wal`) are gitignored.

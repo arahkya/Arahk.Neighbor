@@ -23,9 +23,10 @@ public static class DevUserSeeder
         if (!environment.IsDevelopment())
             return false;
 
-        var users = services.GetRequiredService<IUserRepository>();
-        var hasher = services.GetRequiredService<IPasswordHasher>();
-        var clock = services.GetRequiredService<IClock>();
+        await using var scope = services.CreateAsyncScope();
+        var users = scope.ServiceProvider.GetRequiredService<IUserRepository>();
+        var hasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
+        var clock = scope.ServiceProvider.GetRequiredService<IClock>();
         return await EnsureVerifiedUserAsync(users, hasher, clock, ct);
     }
 

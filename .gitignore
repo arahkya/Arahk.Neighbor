@@ -8,3 +8,6 @@ appsettings.*.local.json
 .idea/
 *.log
 .DS_Store
+*.db
+*.db-shm
+*.db-wal
