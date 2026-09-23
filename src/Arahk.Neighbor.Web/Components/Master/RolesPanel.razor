@@ -1,0 +1,360 @@
+@inject RolePermissionService Permissions
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+@inject IBrowserViewportService BrowserViewport
+@implements IBrowserViewportObserver
+@implements IAsyncDisposable
+@using MudBlazor.Services
+@using Arahk.Neighbor.Domain.Constants
+
+<div class="nb-roles" aria-label="@ThaiCopy.T("roles.a11y.page")">
+    <p class="nb-roles-feature-sub">@ThaiCopy.T("roles.page.subtitle")</p>
+
+    @if (_loadingRoles)
+    {
+        <p class="nb-roles-loading">@ThaiCopy.T("roles.loading")</p>
+    }
+    else if (_isBelowMd)
+    {
+        @if (_selectedRoleKey is null)
+        {
+            <div class="nb-roles-master nb-roles-master--mobile">
+                <h2 class="nb-roles-master-heading">@ThaiCopy.T("roles.master.heading")</h2>
+                <p class="nb-roles-master-hint">@ThaiCopy.T("roles.empty.no_selection.body_mobile")</p>
+                <MudList T="string" Class="nb-roles-list">
+                    @foreach (var role in _roles)
+                    {
+                        <MudListItem T="string"
+                                     Value="@role.Key"
+                                     OnClick="@(() => SelectRoleAsync(role.Key))"
+                                     Class="nb-roles-list-item">
+                            <div class="nb-roles-list-label">
+                                <span class="nb-roles-name-th">@role.NameTh</span>
+                                <span class="nb-roles-name-en">@role.NameEn</span>
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+            </div>
+        }
+        else
+        {
+            <div class="nb-roles-detail nb-roles-detail--mobile">
+                <MudButton Variant="Variant.Text"
+                           StartIcon="@Icons.Material.Filled.ArrowBack"
+                           OnClick="BackMobileAsync"
+                           Class="nb-roles-back">
+                    @ThaiCopy.T("roles.action.back")
+                </MudButton>
+                @RenderDetail()
+            </div>
+        }
+    }
+    else
+    {
+        <div class="nb-roles-split">
+            <aside class="nb-roles-master">
+                <h2 class="nb-roles-master-heading">@ThaiCopy.T("roles.master.heading")</h2>
+                <p class="nb-roles-master-hint">@ThaiCopy.T("roles.master.hint")</p>
+                <MudList T="string" Class="nb-roles-list">
+                    @foreach (var role in _roles)
+                    {
+                        var selected = string.Equals(_selectedRoleKey, role.Key, StringComparison.Ordinal);
+                        <MudListItem T="string"
+                                     Value="@role.Key"
+                                     OnClick="@(() => SelectRoleAsync(role.Key))"
+                                     Class="@(selected ? "nb-roles-list-item is-selected" : "nb-roles-list-item")"
+                                     aria-current="@(selected ? "true" : null)">
+                            <div class="nb-roles-list-label">
+                                <span class="nb-roles-name-th">@role.NameTh</span>
+                                <span class="nb-roles-name-en">@role.NameEn</span>
+                            </div>
+                        </MudListItem>
+                    }
+                </MudList>
+            </aside>
+            <section class="nb-roles-detail">
+                @if (_selectedRoleKey is null)
+                {
+                    <div class="nb-roles-empty">
+                        <h3>@ThaiCopy.T("roles.empty.no_selection.title")</h3>
+                        <p>@ThaiCopy.T("roles.empty.no_selection.body")</p>
+                    </div>
+                }
+                else
+                {
+                    @RenderDetail()
+                }
+            </section>
+        </div>
+    }
+</div>
+
+@code {
+    private readonly Guid _communityId = HouseConstants.DefaultCommunityId;
+    private Guid _observerId = Guid.NewGuid();
+    private bool _isBelowMd = true;
+    private bool _loadingRoles = true;
+    private bool _loadingDetail;
+    private bool _saving;
+    private List<RoleDto> _roles = [];
+    private string? _selectedRoleKey;
+    private RolePermissionDetailDto? _detail;
+    private RolePermissionDraft? _draft;
+
+    Guid IBrowserViewportObserver.Id => _observerId;
+    ResizeOptions? IBrowserViewportObserver.ResizeOptions => null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _roles = (await Permissions.ListRolesAsync()).ToList();
+        _loadingRoles = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await BrowserViewport.SubscribeAsync(this, fireImmediately: true);
+    }
+
+    async Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs args)
+    {
+        var belowMd = !await BrowserViewport.IsBreakpointWithinWindowSizeAsync(Breakpoint.MdAndUp);
+        if (_isBelowMd != belowMd)
+        {
+            _isBelowMd = belowMd;
+            await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private RenderFragment RenderDetail() => __builder =>
+    {
+        if (_loadingDetail || _detail is null || _draft is null)
+        {
+            <p class="nb-roles-loading">@ThaiCopy.T("roles.loading")</p>
+            return;
+        }
+
+        <div class="nb-roles-detail-header">
+            <h2 class="nb-roles-detail-title">
+                @ThaiCopy.Format("roles.detail.heading", ("role", _detail.Role.NameTh))
+            </h2>
+            <p class="nb-roles-detail-sub">
+                @ThaiCopy.T("roles.detail.sub")
+                <span class="nb-roles-locked-hint"> · @ThaiCopy.T("roles.perm.locked_hint")</span>
+            </p>
+        </div>
+
+        var groups = _detail.Permissions
+            .GroupBy(p => p.Group)
+            .OrderBy(g => GroupOrder(g.Key));
+
+        @foreach (var group in groups)
+        {
+            <div class="nb-roles-perm-group-label">@GroupLabel(group.Key)</div>
+            @foreach (var row in group.OrderBy(p => p.SortOrder))
+            {
+                var locked = row.IsLocked;
+                var value = locked ? false : (_draft.Current.TryGetValue(row.Key, out var v) && v);
+                var rowClass = locked ? "nb-roles-perm-row is-locked" : "nb-roles-perm-row";
+                if (!locked && row.Key == PermissionKeys.CanLogin && !value)
+                    rowClass += " is-login-off";
+
+                <div class="@rowClass" aria-disabled="@(locked ? "true" : null)">
+                    <div class="nb-roles-perm-meta">
+                        <span class="nb-roles-perm-label">
+                            @row.NameTh
+                            @if (row.IsProposed)
+                            {
+                                <span class="nb-proposed-tag">@ThaiCopy.T("roles.badge.proposed")</span>
+                            }
+                        </span>
+                        <span class="nb-roles-perm-key">@row.Key</span>
+                        @if (locked)
+                        {
+                            <span class="nb-roles-lock-badge">@ThaiCopy.T("roles.perm.locked_badge")</span>
+                        }
+                    </div>
+                    <MudSwitch T="bool"
+                               Value="@value"
+                               ValueChanged="@(v => OnToggle(row.Key, v))"
+                               Color="Color.Primary"
+                               Disabled="@(locked || _saving)"
+                               aria-label="@row.NameTh" />
+                </div>
+
+                @if (!locked && row.Key == PermissionKeys.CanLogin && !value)
+                {
+                    <MudAlert Severity="Severity.Warning" Dense="true" Class="nb-roles-login-warn" Variant="Variant.Outlined">
+                        @ThaiCopy.T("roles.login_off.warn")
+                    </MudAlert>
+                }
+            }
+        }
+
+        @if (_draft.IsDirty)
+        {
+            <MudPaper Class="nb-roles-dirty-bar" Elevation="0">
+                <span class="nb-roles-dirty-msg">@ThaiCopy.T("roles.dirty.message")</span>
+                <div class="nb-roles-dirty-actions">
+                    <MudButton Variant="Variant.Text" OnClick="CancelDraft" Disabled="_saving">
+                        @ThaiCopy.T("roles.action.cancel")
+                    </MudButton>
+                    <MudButton Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               OnClick="SaveAsync"
+                               Disabled="_saving"
+                               Class="nb-roles-save">
+                        @ThaiCopy.T("roles.action.save")
+                    </MudButton>
+                </div>
+            </MudPaper>
+        }
+    };
+
+    private async Task SelectRoleAsync(string roleKey)
+    {
+        if (string.Equals(_selectedRoleKey, roleKey, StringComparison.Ordinal))
+            return;
+
+        if (_draft?.IsDirty == true)
+        {
+            var stay = await ConfirmDiscardAsync();
+            if (stay)
+                return;
+        }
+
+        await LoadDetailAsync(roleKey);
+    }
+
+    private async Task BackMobileAsync()
+    {
+        if (_draft?.IsDirty == true)
+        {
+            var stay = await ConfirmDiscardAsync();
+            if (stay)
+                return;
+        }
+
+        _selectedRoleKey = null;
+        _detail = null;
+        _draft = null;
+    }
+
+    private async Task LoadDetailAsync(string roleKey)
+    {
+        _loadingDetail = true;
+        _selectedRoleKey = roleKey;
+        StateHasChanged();
+
+        var result = await Permissions.GetRolePermissionsAsync(_communityId, roleKey);
+        if (!result.Succeeded || result.Data is null)
+        {
+            _loadingDetail = false;
+            return;
+        }
+
+        _detail = result.Data;
+        var baseline = _detail.Permissions.ToDictionary(p => p.Key, p => p.IsGranted, StringComparer.Ordinal);
+        var locked = _detail.Permissions.Where(p => p.IsLocked).Select(p => p.Key);
+        _draft = new RolePermissionDraft(baseline, locked);
+        _loadingDetail = false;
+    }
+
+    private void OnToggle(string key, bool value)
+    {
+        _draft?.TrySet(key, value);
+    }
+
+    private void CancelDraft()
+    {
+        _draft?.Cancel();
+    }
+
+    private async Task SaveAsync()
+    {
+        if (_draft is null || _selectedRoleKey is null || !_draft.IsDirty)
+            return;
+
+        var snapshot = _draft.SnapshotForSave();
+        if (snapshot.TryGetValue(PermissionKeys.CanLogin, out var canLogin) && !canLogin)
+        {
+            var confirmed = await ConfirmLoginOffAsync();
+            if (!confirmed)
+                return;
+        }
+
+        _saving = true;
+        try
+        {
+            var result = await Permissions.SaveRolePermissionsAsync(
+                _communityId,
+                new SaveRolePermissionsRequest(_selectedRoleKey, snapshot));
+            if (result.Succeeded)
+            {
+                _draft.MarkSaved();
+                Snackbar.Add(ThaiCopy.T("roles.toast.saved"), Severity.Success);
+                await LoadDetailAsync(_selectedRoleKey);
+            }
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private async Task<bool> ConfirmDiscardAsync()
+    {
+        var result = await DialogService.ShowMessageBoxAsync(
+            ThaiCopy.T("roles.unsaved.title"),
+            ThaiCopy.T("roles.unsaved.body"),
+            yesText: ThaiCopy.T("roles.unsaved.discard"),
+            cancelText: ThaiCopy.T("roles.unsaved.stay"));
+        return result != true; // true = discard → don't stay; null/false = stay
+    }
+
+    private async Task<bool> ConfirmLoginOffAsync()
+    {
+        var roleName = _detail?.Role.NameTh ?? _selectedRoleKey ?? "";
+        var body = ThaiCopy.Format("roles.login_off.confirm_body", ("role", roleName));
+        if (string.Equals(_selectedRoleKey, RoleKeys.Juristic, StringComparison.Ordinal))
+            body += "\n\n" + ThaiCopy.T("roles.login_off.confirm_juristic");
+
+        var result = await DialogService.ShowMessageBoxAsync(
+            ThaiCopy.T("roles.login_off.confirm_title"),
+            body,
+            yesText: ThaiCopy.T("roles.login_off.confirm"),
+            cancelText: ThaiCopy.T("roles.action.cancel"));
+        return result == true;
+    }
+
+    private static int GroupOrder(string group) => group switch
+    {
+        PermissionGroups.Account => 1,
+        PermissionGroups.MainNav => 2,
+        PermissionGroups.Master => 3,
+        _ => 9
+    };
+
+    private static string GroupLabel(string group) => group switch
+    {
+        PermissionGroups.Account => ThaiCopy.T("roles.group.account"),
+        PermissionGroups.MainNav => ThaiCopy.T("roles.group.main_nav"),
+        PermissionGroups.Master => ThaiCopy.T("roles.group.master"),
+        _ => group
+    };
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await BrowserViewport.UnsubscribeAsync(this);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+        catch (ObjectDisposedException)
+        {
+        }
+    }
+}

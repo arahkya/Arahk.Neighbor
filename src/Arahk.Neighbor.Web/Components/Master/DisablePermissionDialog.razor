@@ -1,0 +1,49 @@
+@using Arahk.Neighbor.Domain.Catalog
+
+<MudDialog Class="nb-perm-disable-dialog">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@ThaiCopy.Format("perms.disable.title", ("name", NameTh))</MudText>
+    </TitleContent>
+    <DialogContent>
+        <p class="nb-dialog-subtitle">@ThaiCopy.Format("perms.disable.key_line", ("key", PermissionKey))</p>
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="nb-perm-disable-warn" Dense="true">
+            <strong>ผลเมื่อปิด:</strong>
+            <ul class="nb-perm-disable-effects">
+                <li>@ThaiCopy.T("perms.disable.effect1")</li>
+                <li>@ThaiCopy.T("perms.disable.effect2")</li>
+            </ul>
+            @if (RoleKeysUsing.Count > 0)
+            {
+                <strong class="nb-perm-disable-inuse-label">@ThaiCopy.T("perms.disable.in_use")</strong>
+                <ul class="nb-perm-disable-roles">
+                    @foreach (var key in RoleKeysUsing)
+                    {
+                        var role = RoleCatalog.Find(key);
+                        <li>@(role?.NameTh ?? key)</li>
+                    }
+                </ul>
+            }
+            <p class="nb-perm-disable-restore">@ThaiCopy.T("perms.disable.restore_note")</p>
+        </MudAlert>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel" Variant="Variant.Text">@ThaiCopy.T("perms.disable.cancel")</MudButton>
+        <MudButton Color="Color.Error"
+                   Variant="Variant.Outlined"
+                   OnClick="Confirm"
+                   Class="nb-perm-disable-confirm">
+            @ThaiCopy.T("perms.disable.confirm")
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = default!;
+
+    [Parameter] public string PermissionKey { get; set; } = "";
+    [Parameter] public string NameTh { get; set; } = "";
+    [Parameter] public IReadOnlyList<string> RoleKeysUsing { get; set; } = Array.Empty<string>();
+
+    private void Cancel() => MudDialog.Cancel();
+    private void Confirm() => MudDialog.Close(DialogResult.Ok(true));
+}

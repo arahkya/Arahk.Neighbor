@@ -1,5 +1,7 @@
 @page "/master"
 @page "/master/houses"
+@page "/master/roles"
+@page "/master/permissions"
 @layout AppLayout
 @rendermode InteractiveServer
 @implements IBrowserViewportObserver
@@ -16,7 +18,8 @@
 }
 else
 {
-    <section class="nb-master" aria-label="@ThaiCopy.T("houses.a11y.page")">
+    <section class="nb-master @(_activeSection == MasterSection.Roles || _activeSection == MasterSection.Permissions ? "nb-master--wide" : null)"
+             aria-label="@PageAria()">
         <h1 class="nb-master-title">@ThaiCopy.T("master.page.title")</h1>
         <p class="nb-master-subtitle">@ThaiCopy.T("master.page.subtitle")</p>
 
@@ -24,7 +27,7 @@ else
         {
             <div class="nb-master-select-wrap">
                 <MudSelect T="string"
-                           Value="@MasterSection.Houses"
+                           Value="@_activeSection"
                            ValueChanged="OnSectionChanged"
                            Label="@ThaiCopy.T("master.select.label")"
                            Variant="Variant.Outlined"
@@ -38,27 +41,41 @@ else
                     <MudSelectItem T="string" Value="@MasterSection.Activities" Disabled="true">@ThaiCopy.T("master.tab.activities")</MudSelectItem>
                     <MudSelectItem T="string" Value="@MasterSection.Announcements" Disabled="true">@ThaiCopy.T("master.tab.announcements")</MudSelectItem>
                     <MudSelectItem T="string" Value="@MasterSection.Users" Disabled="true">@ThaiCopy.T("master.tab.users")</MudSelectItem>
-                    <MudSelectItem T="string" Value="@MasterSection.Roles" Disabled="true">@ThaiCopy.T("master.tab.roles")</MudSelectItem>
-                    <MudSelectItem T="string" Value="@MasterSection.Permissions" Disabled="true">@ThaiCopy.T("master.tab.permissions")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Roles">@ThaiCopy.T("master.tab.roles")</MudSelectItem>
+                    <MudSelectItem T="string" Value="@MasterSection.Permissions">@ThaiCopy.T("master.tab.permissions")</MudSelectItem>
                 </MudSelect>
             </div>
-            <HousesPanel />
+            @RenderActivePanel()
         }
         else
         {
             <MudTabs Elevation="0"
                      Rounded="false"
                      Class="nb-master-tabs"
-                     ActivePanelIndex="0">
+                     ActivePanelIndex="_tabIndex"
+                     ActivePanelIndexChanged="OnTabIndexChanged">
                 <MudTabPanel Text="@ThaiCopy.T("master.tab.houses")" Class="nb-master-tab-panel">
-                    <HousesPanel />
+                    @if (_activeSection == MasterSection.Houses)
+                    {
+                        <HousesPanel />
+                    }
                 </MudTabPanel>
                 <MudTabPanel Text="@ThaiCopy.T("master.tab.calendar")" Disabled="true" />
                 <MudTabPanel Text="@ThaiCopy.T("master.tab.activities")" Disabled="true" />
                 <MudTabPanel Text="@ThaiCopy.T("master.tab.announcements")" Disabled="true" />
                 <MudTabPanel Text="@ThaiCopy.T("master.tab.users")" Disabled="true" />
-                <MudTabPanel Text="@ThaiCopy.T("master.tab.roles")" Disabled="true" />
-                <MudTabPanel Text="@ThaiCopy.T("master.tab.permissions")" Disabled="true" />
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.roles")" Class="nb-master-tab-panel">
+                    @if (_activeSection == MasterSection.Roles)
+                    {
+                        <RolesPanel />
+                    }
+                </MudTabPanel>
+                <MudTabPanel Text="@ThaiCopy.T("master.tab.permissions")" Class="nb-master-tab-panel">
+                    @if (_activeSection == MasterSection.Permissions)
+                    {
+                        <PermissionsPanel />
+                    }
+                </MudTabPanel>
             </MudTabs>
         }
     </section>
@@ -67,6 +84,8 @@ else
 @code {
     private bool _isBelowMd = true;
     private Guid _observerId = Guid.NewGuid();
+    private string _activeSection = MasterSection.Houses;
+    private int _tabIndex;
 
     Guid IBrowserViewportObserver.Id => _observerId;
     ResizeOptions? IBrowserViewportObserver.ResizeOptions => null;
@@ -79,6 +98,22 @@ else
             return;
         }
         Shell.ClearComingSoon();
+        ApplyFromUri();
+    }
+
+    protected override void OnParametersSet() => ApplyFromUri();
+
+    private void ApplyFromUri()
+    {
+        var path = Nav.ToBaseRelativePath(Nav.Uri).Trim('/').ToLowerInvariant();
+        _activeSection = path switch
+        {
+            "master/roles" => MasterSection.Roles,
+            "master/permissions" => MasterSection.Permissions,
+            "master/houses" => MasterSection.Houses,
+            _ => MasterSection.Houses
+        };
+        _tabIndex = SectionToTabIndex(_activeSection);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -97,11 +132,80 @@ else
         }
     }
 
+    private RenderFragment RenderActivePanel() => __builder =>
+    {
+        switch (_activeSection)
+        {
+            case MasterSection.Roles:
+                <RolesPanel />
+                break;
+            case MasterSection.Permissions:
+                <PermissionsPanel />
+                break;
+            default:
+                <HousesPanel />
+                break;
+        }
+    };
+
     private Task OnSectionChanged(string value)
     {
-        // Only Houses is selectable this round; keep value locked.
+        if (value is MasterSection.Calendar or MasterSection.Activities
+            or MasterSection.Announcements or MasterSection.Users)
+            return Task.CompletedTask;
+
+        NavigateToSection(value);
         return Task.CompletedTask;
     }
+
+    private Task OnTabIndexChanged(int index)
+    {
+        // Ignore disabled tabs (1–4)
+        if (index is >= 1 and <= 4)
+            return Task.CompletedTask;
+
+        var section = TabIndexToSection(index);
+        NavigateToSection(section);
+        return Task.CompletedTask;
+    }
+
+    private void NavigateToSection(string section)
+    {
+        _activeSection = section;
+        _tabIndex = SectionToTabIndex(section);
+        var url = section switch
+        {
+            MasterSection.Roles => "/master/roles",
+            MasterSection.Permissions => "/master/permissions",
+            _ => "/master/houses"
+        };
+        if (!Nav.Uri.EndsWith(url, StringComparison.OrdinalIgnoreCase) &&
+            !(section == MasterSection.Houses && Nav.ToBaseRelativePath(Nav.Uri).Trim('/') is "master" or "master/houses"))
+        {
+            Nav.NavigateTo(url);
+        }
+    }
+
+    private static int SectionToTabIndex(string section) => section switch
+    {
+        MasterSection.Roles => 5,
+        MasterSection.Permissions => 6,
+        _ => 0
+    };
+
+    private static string TabIndexToSection(int index) => index switch
+    {
+        5 => MasterSection.Roles,
+        6 => MasterSection.Permissions,
+        _ => MasterSection.Houses
+    };
+
+    private string PageAria() => _activeSection switch
+    {
+        MasterSection.Roles => ThaiCopy.T("roles.a11y.page"),
+        MasterSection.Permissions => ThaiCopy.T("perms.a11y.page"),
+        _ => ThaiCopy.T("houses.a11y.page")
+    };
 
     public async ValueTask DisposeAsync()
     {

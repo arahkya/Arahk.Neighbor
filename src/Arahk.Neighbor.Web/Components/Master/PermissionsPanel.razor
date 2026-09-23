@@ -1,0 +1,135 @@
+@inject RolePermissionService Permissions
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<div class="nb-perms" aria-label="@ThaiCopy.T("perms.a11y.page")">
+    <div class="nb-perms-header">
+        <div>
+            <h2 class="nb-perms-title">@ThaiCopy.T("perms.page.title")</h2>
+            <p class="nb-perms-subtitle">@ThaiCopy.T("perms.page.subtitle")</p>
+        </div>
+    </div>
+
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="nb-perms-callout" Dense="true">
+        @ThaiCopy.T("perms.callout.static")
+    </MudAlert>
+
+    @if (_loading)
+    {
+        <p class="nb-perms-loading">@ThaiCopy.T("state.loading")</p>
+    }
+    else if (_summary is not null)
+    {
+        <MudPaper Class="nb-perms-panel" Elevation="0">
+            <MudTable Items="_summary.Items"
+                      Dense="true"
+                      Hover="true"
+                      Class="nb-perms-table"
+                      Breakpoint="Breakpoint.Sm"
+                      Loading="_busy">
+                <HeaderContent>
+                    <MudTh>@ThaiCopy.T("perms.col.name")</MudTh>
+                    <MudTh>@ThaiCopy.T("perms.col.key")</MudTh>
+                    <MudTh>@ThaiCopy.T("perms.col.group")</MudTh>
+                    <MudTh Style="text-align:center;width:120px;">@ThaiCopy.T("perms.col.master")</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@ThaiCopy.T("perms.col.name")" Class="@(context.IsEnabledInSystem ? null : "nb-perms-row-off")">
+                        <span>@context.NameTh</span>
+                        @if (context.IsProposed)
+                        {
+                            <span class="nb-proposed-tag">@ThaiCopy.T("perms.badge.proposed")</span>
+                        }
+                    </MudTd>
+                    <MudTd DataLabel="@ThaiCopy.T("perms.col.key")" Class="nb-perms-key">@context.Key</MudTd>
+                    <MudTd DataLabel="@ThaiCopy.T("perms.col.group")">
+                        <span class="nb-perm-group-chip nb-perm-group-chip--@context.Group">@GroupLabel(context.Group)</span>
+                    </MudTd>
+                    <MudTd DataLabel="@ThaiCopy.T("perms.col.master")" Style="text-align:center;">
+                        <MudSwitch T="bool"
+                                   Value="context.IsEnabledInSystem"
+                                   ValueChanged="@(v => OnMasterChangedAsync(context, v))"
+                                   Color="Color.Primary"
+                                   Disabled="_busy"
+                                   aria-label="@($"{ThaiCopy.T("perms.col.master")}: {context.NameTh}")" />
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+            <p class="nb-perms-count">
+                @ThaiCopy.Format("perms.count",
+                    ("total", _summary.TotalCount),
+                    ("on", _summary.EnabledCount),
+                    ("off", _summary.DisabledCount))
+            </p>
+        </MudPaper>
+    }
+</div>
+
+@code {
+    private readonly Guid _communityId = HouseConstants.DefaultCommunityId;
+    private bool _loading = true;
+    private bool _busy;
+    private PermissionCatalogSummaryDto? _summary;
+
+    protected override async Task OnInitializedAsync() => await ReloadAsync();
+
+    private async Task ReloadAsync()
+    {
+        _loading = true;
+        _summary = await Permissions.GetCatalogAsync(_communityId);
+        _loading = false;
+    }
+
+    private async Task OnMasterChangedAsync(PermissionCatalogItemDto item, bool enabled)
+    {
+        if (enabled == item.IsEnabledInSystem)
+            return;
+
+        if (!enabled)
+        {
+            var parameters = new DialogParameters<DisablePermissionDialog>
+            {
+                { x => x.PermissionKey, item.Key },
+                { x => x.NameTh, item.NameTh },
+                { x => x.RoleKeysUsing, item.RoleKeysUsing },
+            };
+            var options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true };
+            var dialog = await DialogService.ShowAsync<DisablePermissionDialog>(
+                ThaiCopy.Format("perms.disable.title", ("name", item.NameTh)),
+                parameters,
+                options);
+            var result = await dialog.Result;
+            if (result is null || result.Canceled)
+            {
+                await ReloadAsync();
+                StateHasChanged();
+                return;
+            }
+        }
+
+        _busy = true;
+        try
+        {
+            var r = await Permissions.SetMasterEnabledAsync(_communityId, item.Key, enabled);
+            if (r.Succeeded)
+            {
+                Snackbar.Add(
+                    enabled ? ThaiCopy.T("perms.toast.enabled") : ThaiCopy.T("perms.toast.disabled"),
+                    Severity.Success);
+            }
+        }
+        finally
+        {
+            _busy = false;
+            await ReloadAsync();
+        }
+    }
+
+    private static string GroupLabel(string group) => group switch
+    {
+        PermissionGroups.Account => ThaiCopy.T("perms.group.account"),
+        PermissionGroups.MainNav => ThaiCopy.T("perms.group.main_nav"),
+        PermissionGroups.Master => ThaiCopy.T("perms.group.master"),
+        _ => group
+    };
+}

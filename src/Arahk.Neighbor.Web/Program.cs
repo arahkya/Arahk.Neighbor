@@ -34,4 +34,7 @@ app.MapRazorComponents<App>()
 // Development-only verified demo user — never runs in Production.
 await DevUserSeeder.SeedIfDevelopmentAsync(app.Services, app.Environment);
 
+// Development/in-memory role + permission catalog + defaults.
+await DevRolePermissionSeeder.SeedIfDevelopmentAsync(app.Services, app.Environment);
+
 app.Run();

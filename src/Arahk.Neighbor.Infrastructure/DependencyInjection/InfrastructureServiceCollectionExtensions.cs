@@ -17,6 +17,10 @@ public static class InfrastructureServiceCollectionExtensions
         services.AddSingleton<IOtpRepository>(sp => sp.GetRequiredService<InMemoryOtpRepository>());
         services.AddSingleton<InMemoryHouseRepository>();
         services.AddSingleton<IHouseRepository>(sp => sp.GetRequiredService<InMemoryHouseRepository>());
+        services.AddSingleton<InMemoryPermissionMasterRepository>();
+        services.AddSingleton<IPermissionMasterRepository>(sp => sp.GetRequiredService<InMemoryPermissionMasterRepository>());
+        services.AddSingleton<InMemoryRolePermissionRepository>();
+        services.AddSingleton<IRolePermissionRepository>(sp => sp.GetRequiredService<InMemoryRolePermissionRepository>());
         services.AddSingleton<IHouseExcelParser, ClosedXmlHouseExcelParser>();
         services.AddSingleton<InMemoryEmailSender>();
         services.AddSingleton<IEmailSender>(sp => sp.GetRequiredService<InMemoryEmailSender>());
