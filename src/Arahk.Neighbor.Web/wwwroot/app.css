@@ -571,11 +571,13 @@ html, body {
   background: var(--nb-color-overlay) !important;
 }
 
-/* Fixed AppBar: leave padding-top to Mud (.mud-main-content clears --mud-appbar-height). Content L/R/B = Mud scale. */
+/* Fixed AppBar: pad-top clears bar + breath (restore lost at 816b9e4). Content L/R/B = Mud scale. */
 .nb-main.mud-main-content,
 .nb-main {
   background: var(--nb-color-bg) !important;
   min-height: 100vh;
+  /* Mud appbar clear + pt-6 (24) breath — also fixes mobile Mud 56 under-clear */
+  padding-top: calc(var(--mud-appbar-height) + 24px) !important;
   /* Mud px-6 / pb-10 — loosen side pad vs prior px-5 */
   padding-right: 24px !important;
   padding-bottom: 40px !important;
@@ -585,6 +587,8 @@ html, body {
 @media (min-width: 960px) {
   .nb-main.mud-main-content,
   .nb-main {
+    /* Mud appbar clear + pt-8 (32) breath */
+    padding-top: calc(var(--mud-appbar-height) + 32px) !important;
     /* Mud px-12 / pb-12 — desktop side pad 48 */
     padding-right: 48px !important;
     padding-bottom: 48px !important;
@@ -598,7 +602,7 @@ html, body {
 }
 
 .nb-alert-soon {
-  margin-bottom: 16px !important;
+  margin-bottom: 24px !important;
   background: var(--nb-color-primary-muted) !important;
   border: var(--nb-border-width-hairline) solid var(--nb-color-primary) !important;
   border-radius: var(--nb-radius-card) !important;
@@ -663,7 +667,7 @@ html, body {
   object-position: left center;
   border-radius: var(--nb-radius-card);
   background: var(--nb-color-accent-soft);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border: var(--nb-border-width-hairline) solid var(--nb-color-border);
 }
 
@@ -750,7 +754,7 @@ html, body {
 }
 
 .nb-master-select-wrap {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .nb-master-select {
@@ -758,7 +762,7 @@ html, body {
 }
 
 .nb-master-tabs {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .nb-master-tabs .mud-tabs-toolbar {
@@ -786,7 +790,7 @@ html, body {
 }
 
 .nb-master-tab-panel {
-  padding-top: 28px; /* more air under tabs */
+  padding-top: 32px; /* more air under tabs */
 }
 
 .nb-houses-header {
@@ -800,7 +804,7 @@ html, body {
 }
 
 .nb-houses-title {
-  margin: 0 0 4px;
+  margin: 0 0 12px;
   font: var(--nb-font-title);
   font-size: var(--nb-font-size-title);
   color: var(--nb-color-text-primary);
@@ -1055,7 +1059,7 @@ html, body {
 
 .nb-perms-header,
 .nb-roles-feature-sub {
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 }
 
 .nb-perms-title {
@@ -1160,7 +1164,7 @@ html, body {
 .nb-roles-split {
   display: grid;
   grid-template-columns: minmax(200px, 280px) 1fr;
-  gap: 20px;
+  gap: 24px;
   align-items: start;
 }
 
@@ -1485,7 +1489,7 @@ html, body {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 24px;
 }
 
 .nb-profile-page-title {
